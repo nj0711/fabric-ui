@@ -1,0 +1,1977 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Fabric UI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Fredoka:wght@500;600;700&family=IBM+Plex+Mono:wght@500&family=Nunito+Sans:opsz,wght@6..12,500;6..12,600;6..12,700;6..12,800&display=swap">
+<style>
+/* Layout: a self-healing cutting mat as the worktable; the phone sits left, the studio panel right (stacked on phones). */
+:root {
+  --page-bg: #c8d2c2; --mat-line: rgba(38, 64, 44, .13); --mat-major: rgba(38, 64, 44, .25);
+  --page-panel: #f7f6f2; --page-panel-2: #eeede6; --page-fg: #1f2420; --page-muted: #586159; --page-line: #d5d8cf;
+  --page-accent: #2c4a7a; --page-on-accent: #ffffff; --page-err: #a3352b; --bed: #e3e0d8;
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-thread: 'Fredoka', 'Nunito Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --label: var(--page-fg);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page-bg: #16221b; --mat-line: rgba(170, 210, 180, .065); --mat-major: rgba(170, 210, 180, .13);
+    --page-panel: #1b201d; --page-panel-2: #232a25; --page-fg: #e7ebe5; --page-muted: #a1aba2; --page-line: #303934;
+    --page-accent: #9fb8e6; --page-on-accent: #0f1f38; --page-err: #f19084; --bed: #2a302c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page-bg: #16221b; --mat-line: rgba(170, 210, 180, .065); --mat-major: rgba(170, 210, 180, .13);
+  --page-panel: #1b201d; --page-panel-2: #232a25; --page-fg: #e7ebe5; --page-muted: #a1aba2; --page-line: #303934;
+  --page-accent: #9fb8e6; --page-on-accent: #0f1f38; --page-err: #f19084; --bed: #2a302c; color-scheme: dark;
+}
+body {
+  background-color: var(--page-bg); color: var(--page-fg); font-family: var(--font-body); font-size: 14px;
+  background-image: linear-gradient(var(--mat-major) 1px, transparent 1px), linear-gradient(90deg, var(--mat-major) 1px, transparent 1px), linear-gradient(var(--mat-line) 1px, transparent 1px), linear-gradient(90deg, var(--mat-line) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  overflow-x: hidden;
+}
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; }
+.sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; margin: -1px; }
+:focus-visible { outline: 2px solid var(--page-accent); outline-offset: 2px; border-radius: 8px; }
+
+/* ---------- page frame ---------- */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-block: 18px 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); max-width: 1180px; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand h1 { font-family: var(--font-display); font-weight: 800; font-size: 26px; letter-spacing: -.01em; margin: 0; line-height: 1.05; }
+.brand p { margin: 2px 0 0; color: var(--page-muted); font-size: 13px; }
+.brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--page-panel); border: 1px solid var(--page-line); }
+.layout { display: grid; grid-template-columns: minmax(360px, 430px) minmax(0, 660px); gap: 32px; justify-content: center; align-items: start; max-width: 1180px; margin: 0 auto; padding-block: 6px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.phone-col { position: sticky; top: calc(10px + env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.phone-cap { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--page-panel); border: 1px solid var(--page-line); border-radius: 14px; padding: 10px 14px; }
+.phone-cap p { margin: 0; font-size: 12.5px; color: var(--page-muted); line-height: 1.45; flex: 1 1 220px; }
+.phone-cap b { color: var(--page-fg); }
+.app.narrow .layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.app.narrow .phone-col { position: static; }
+.app.studio-open .phone-col { position: sticky; top: 0; z-index: 30; padding-block: 6px; background: color-mix(in srgb, var(--page-bg) 88%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); margin-inline: -16px; padding-inline: 16px; }
+.mobile-switch { width: 100%; }
+.mobile-switch .seg { width: 100%; }
+.mobile-switch .seg button { flex: 1; }
+
+/* ---------- phone ---------- */
+.stage { position: relative; width: 100%; }
+.device { position: absolute; left: 50%; top: 0; width: 380px; height: 800px; margin-left: -190px; transform-origin: top center; padding: 10px; border-radius: 52px; background: linear-gradient(145deg, #2c2d30, #151618); box-shadow: 0 1px 0 rgba(255, 255, 255, .12) inset, 0 0 0 1.5px #0b0b0c, 0 30px 60px -20px rgba(0, 0, 0, .55), 0 12px 24px -10px rgba(0, 0, 0, .4); }
+.screen { position: relative; width: 360px; height: 780px; border-radius: 42px; overflow: hidden; background: #6b6f73; font-family: var(--font-body); color: var(--ink); -webkit-user-select: none; user-select: none; }
+.wall { position: absolute; inset: 0; background-size: cover; background-position: center; transition: background-image .3s; }
+.wall-tint { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(rgba(0, 0, 0, .22), rgba(0, 0, 0, 0) 70px); }
+.screen[data-mode="dark"] .wall-tint { background: linear-gradient(rgba(0, 0, 0, .45), rgba(0, 0, 0, .28) 120px, rgba(0, 0, 0, .3)); }
+.statusbar { position: absolute; top: 0; left: 0; right: 0; height: 34px; padding: 6px 24px 0; display: flex; align-items: center; justify-content: space-between; color: #fff; font-weight: 700; font-size: 13px; text-shadow: 0 1px 2px rgba(0, 0, 0, .45); z-index: 6; font-variant-numeric: tabular-nums; }
+.sb-right { display: flex; align-items: center; gap: 6px; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .4)); }
+.sb-bat { display: inline-block; width: 22px; height: 11px; border: 1.5px solid currentColor; border-radius: 3px; padding: 1px; }
+.sb-bat span { display: block; height: 100%; background: currentColor; border-radius: 1px; }
+.sb-pct { font-size: 12px; }
+.pager { position: absolute; top: 38px; left: 0; width: 360px; bottom: 122px; overflow: hidden; z-index: 2; touch-action: pan-y; }
+.pager-track { display: flex; height: 100%; transition: transform .38s cubic-bezier(.3, .7, .2, 1); }
+.page { width: 360px; flex: none; padding: 6px 12px 0; display: flex; flex-direction: column; gap: 12px; position: relative; }
+.row { display: flex; gap: 10px; align-items: stretch; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); row-gap: 12px; justify-items: center; margin-top: 2px; }
+.dots { position: absolute; bottom: 102px; left: 0; right: 0; display: flex; justify-content: center; gap: 4px; z-index: 3; }
+.dot { background: none; border: 0; padding: 3px; cursor: pointer; line-height: 0; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .3)); }
+.dock { position: absolute; left: 12px; bottom: 18px; z-index: 3; }
+.dock-row { display: flex; justify-content: space-around; align-items: center; width: 100%; padding: 0 8px; }
+.navbar { position: absolute; bottom: 6px; left: 50%; width: 112px; margin-left: -56px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .75); z-index: 4; }
+.love-confetti { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+
+/* ---------- the patch engine (canvas-rendered) ---------- */
+.patch { position: relative; flex: none; display: flex; align-items: center; justify-content: center; color: var(--ink); transition: transform .12s; }
+.patch[data-ready="false"] { background: var(--fab); box-shadow: 0 2px 6px rgba(0, 0, 0, .22); }
+.patch.recess[data-ready="false"] { box-shadow: inset 0 1px 3px rgba(0, 0, 0, .3); }
+.patch.bare[data-ready="false"], .patch.shape-path[data-ready="false"] { background: transparent; box-shadow: none; }
+.p-canvas { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 0; }
+.p-content { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.stitched { display: inline-block; }
+.abs { position: absolute; inset: 0; }
+.emb { font-family: var(--font-thread); color: var(--ink); filter: url(#f-emb-text); line-height: 1.05; display: inline-block; padding: 1px 2px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.emb-sm { filter: url(#f-emb-sm); }
+.cutout { filter: drop-shadow(1px 2px 2px rgb(0 0 0 / calc(.35 * var(--d, 1)))); pointer-events: none; -webkit-user-drag: none; }
+.glyph, .leaf, .app-logo { display: block; overflow: visible; }
+
+/* ---------- widgets ---------- */
+.widget { cursor: default; }
+.wx-cloud { position: absolute; left: 86px; top: 17px; height: 37px; }
+.wx-pill { position: absolute; left: 14px; bottom: 12px; }
+.wx-bat { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); display: flex; }
+.batbar { position: relative; display: inline-flex; align-items: center; flex: none; }
+.batbar-fill { position: absolute; left: 3px; top: 3px; display: block; }
+.batbar-cap { width: 4px; height: 40%; border-radius: 0 2px 2px 0; margin-left: 1px; box-shadow: inset 0 1px 1px rgba(0, 0, 0, .3); }
+.love-wrap { position: relative; }
+.love { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 11px; }
+.love-heart { position: absolute; top: 5px; left: 50%; width: 80px; height: 72px; margin-left: -40px; transform-origin: 50% 60%; }
+.love-on .love-heart { animation: beat 1.7s ease-in-out infinite; }
+@keyframes beat { 0%, 100% { transform: scale(1); } 12% { transform: scale(1.08); } 24% { transform: scale(.98); } 36% { transform: scale(1.05); } 50% { transform: scale(1); } }
+.cal-grid { position: absolute; display: grid; grid-template-columns: repeat(7, 1fr); font: 600 9px/1 var(--font-thread); color: var(--ink); text-align: center; text-shadow: 0 .7px .4px rgba(0, 0, 0, .28), 0 -.4px 0 rgba(255, 255, 255, .25); }
+.cal-dow { color: var(--ink-soft); height: 12px; display: grid; place-items: center; }
+.cal-d { position: relative; height: 12.6px; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.search-wrap { position: relative; z-index: 4; }
+.search-row { display: flex; align-items: center; gap: 6px; width: 100%; padding: 0 12px 0 46px; }
+.search-input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; font: 500 15px var(--font-thread); color: var(--ink); padding: 6px 0; -webkit-user-select: text; user-select: text; }
+.search-input::placeholder { color: var(--ink-soft); opacity: 1; }
+.search-drop { position: absolute; top: 52px; left: 0; z-index: 5; }
+.search-res { display: flex; gap: 6px; padding: 0 10px; width: 100%; justify-content: flex-start; }
+.icon-btn { background: none; border: 0; padding: 2px; cursor: pointer; line-height: 0; border-radius: 50%; }
+.strip-row { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 11px; }
+.qtile { background: none; border: 0; padding: 0; cursor: pointer; border-radius: 16px; }
+.qtile:active .patch, .app:active .patch, .fbutton:active .patch { transform: translateY(1px) scale(.97); }
+.knot-dot { position: absolute; top: 8px; right: 8px; width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ff7a6b, #c0272e 58%, #7e1519); box-shadow: 0 1px 1.5px rgba(0, 0, 0, .45); }
+.app { display: flex; flex-direction: column; align-items: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; border-radius: 16px; }
+.app-label { font: 700 11.5px/1.2 var(--font-body); color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .7), 0 0 6px rgba(0, 0, 0, .35); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.todo { display: flex; flex-direction: column; gap: 9px; padding: 44px 14px 10px 15px; }
+.todo-row { display: flex; align-items: center; gap: 9px; background: none; border: 0; padding: 2px 0; cursor: pointer; text-align: left; font: 600 12.5px/1.2 var(--font-thread); color: var(--ink); border-radius: 8px; }
+.todo-text { text-shadow: 0 .7px .4px rgba(0, 0, 0, .25), 0 -.4px 0 rgba(255, 255, 255, .25); }
+.todo-row.done .todo-text { text-decoration: line-through; text-decoration-thickness: 1.6px; opacity: .6; }
+.water-btn { background: none; border: 0; padding: 0; cursor: pointer; border-radius: 20px; }
+.water-btn:active .patch { transform: translateY(1px) scale(.98); }
+.contacts { display: flex; justify-content: space-around; align-items: center; width: 100%; padding: 0 14px; }
+.contact { display: flex; flex-direction: column; align-items: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; border-radius: 12px; }
+.contact-name { font: 700 11.5px var(--font-thread); color: var(--ink); }
+.clock { padding: 14px 16px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.clock-time { display: flex; align-items: flex-start; gap: 2px; }
+.clock-ap { margin-top: 6px; }
+.batw { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px; padding-top: 88px; }
+.batw-note { font: 600 10px var(--font-body); color: var(--ink-soft); }
+.music { display: flex; align-items: center; gap: 12px; padding: 0 12px 0 14px; }
+.music-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding-top: 30px; }
+.music-fill { position: absolute; left: 1px; top: 1px; display: block; }
+.music-sub { font: 600 11px var(--font-body); color: var(--ink-soft); padding-left: 2px; }
+.music-prog { display: block; }
+.music-ctl { display: flex; align-items: center; gap: 2px; }
+.shade { position: absolute; inset: 0; z-index: 20; background: rgba(12, 10, 8, .5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: fade .2s; }
+.shade-list { padding: 44px 12px 0; display: flex; flex-direction: column; gap: 10px; }
+.shade-head { display: flex; justify-content: space-between; align-items: center; color: #fff; font: 700 13px var(--font-body); padding: 0 4px; }
+.shade-close { background: rgba(255, 255, 255, .16); border: 0; border-radius: 999px; padding: 5px 12px; color: #fff; font-weight: 700; font-size: 12px; cursor: pointer; }
+.shade-row { display: flex; align-items: center; gap: 10px; padding: 0 14px 0 12px; }
+.shade-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.shade-text span { font: 600 11.5px var(--font-body); color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shade-when { font: 600 11px var(--font-body); color: var(--ink-soft); }
+.shade-note { color: rgba(255, 255, 255, .85); font-size: 11.5px; line-height: 1.4; margin: 4px 6px; }
+.toast { position: absolute; left: 0; right: 0; bottom: 128px; display: flex; justify-content: center; z-index: 15; animation: rise .25s; pointer-events: none; }
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- fabric controls ---------- */
+.fswitch { position: relative; background: none; border: 0; padding: 0; cursor: pointer; flex: none; border-radius: 999px; }
+.fswitch .fswitch-text { position: absolute; left: 9px; top: 50%; transform: translateY(-52%); transition: left .2s; }
+.fswitch:not(.on) .fswitch-text { left: auto; right: 8px; }
+.fswitch-knob { position: absolute; top: 3px; left: 3px; transition: transform .22s cubic-bezier(.3, .7, .2, 1); }
+.fswitch.on .fswitch-knob { transform: translateX(calc(var(--sw, 0px))); }
+.fslider { position: relative; height: 28px; display: flex; align-items: center; cursor: pointer; touch-action: none; flex: none; border-radius: 999px; }
+.fslider-fill { position: absolute; left: 2px; top: 10px; pointer-events: none; }
+.fslider-knob { position: absolute; top: 2px; margin-left: -12px; pointer-events: none; }
+.fcheck { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.fcheck-label { font: 600 13px var(--font-body); color: var(--label); }
+.fcheck input:focus-visible + .patch { outline: 2px solid var(--page-accent); outline-offset: 2px; }
+.knot { display: block; width: 9px; height: 9px; border-radius: 50%; box-shadow: inset -1px -1px 2px rgba(0, 0, 0, .35), inset 1px 1px 1px rgba(255, 255, 255, .3), 0 1px 1px rgba(0, 0, 0, .3); }
+.fbutton { background: none; border: 0; padding: 0; cursor: pointer; border-radius: 999px; }
+
+/* ---------- panel ---------- */
+.panel { background: var(--page-panel); border: 1px solid var(--page-line); border-radius: 20px; min-width: 0; box-shadow: 0 18px 40px -26px rgba(0, 0, 0, .45); }
+.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; display: flex; gap: 4px; padding: 10px; background: var(--page-panel); border-bottom: 1px solid var(--page-line); border-radius: 20px 20px 0 0; overflow-x: auto; scrollbar-width: none; }
+.tabs button { flex: none; background: none; border: 0; padding: 8px 14px; border-radius: 999px; font-weight: 700; font-size: 13.5px; color: var(--page-muted); cursor: pointer; }
+.tabs button.on { background: var(--page-fg); color: var(--page-panel); }
+.panel-body { color: var(--page-fg); }
+.sec { padding: 18px 20px; border-top: 1px solid var(--page-line); display: flex; flex-direction: column; gap: 12px; }
+.sec:first-child { border-top: 0; }
+.sec-head h3 { font-family: var(--font-display); font-size: 16px; font-weight: 700; margin: 0; letter-spacing: -.005em; }
+.sec-hint { margin: 3px 0 0; color: var(--page-muted); font-size: 12.5px; line-height: 1.45; max-width: 62ch; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: 999px; background: var(--page-panel-2); border: 1px solid var(--page-line); }
+.seg button { background: none; border: 0; padding: 7px 14px; border-radius: 999px; font-weight: 700; font-size: 13px; color: var(--page-muted); cursor: pointer; }
+.seg button.on { background: var(--page-accent); color: var(--page-on-accent); }
+.swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+.swatch { background: none; border: 2px solid transparent; border-radius: 50%; padding: 2px; cursor: pointer; line-height: 0; }
+.swatch.sel { border-color: var(--page-fg); }
+.bobbins { gap: 4px; }
+.bobbin { display: flex; flex-direction: column; align-items: center; gap: 1px; background: none; border: 2px solid transparent; border-radius: 10px; padding: 3px 3px 2px; cursor: pointer; }
+.bobbin.sel { border-color: var(--page-fg); }
+.bobbin-code { font: 500 9.5px var(--font-mono); color: var(--page-muted); }
+.ideas { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ideas-label, .inline-label { font-size: 12px; font-weight: 700; color: var(--page-muted); }
+.ideas-label { width: 100%; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--page-line); border-radius: 999px; padding: 4px 10px; font-size: 12.5px; font-weight: 600; background: var(--page-panel); color: var(--page-fg); }
+.chip code { font: 500 11px var(--font-mono); color: var(--page-muted); }
+.chip-btn { cursor: pointer; }
+.chip-btn.sel { border-color: var(--page-accent); box-shadow: 0 0 0 1px var(--page-accent) inset; }
+.chip-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .18); flex: none; }
+.colorfield { display: flex; align-items: center; gap: 8px; }
+.cf-pick { position: relative; width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--page-line); cursor: pointer; overflow: hidden; flex: none; }
+.cf-pick input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.cf-hex, .text-in { font: 500 13px var(--font-mono); width: 110px; padding: 7px 10px; border-radius: 10px; border: 1px solid var(--page-line); background: var(--page-panel); color: var(--page-fg); }
+.text-in { font-family: var(--font-body); width: 200px; max-width: 100%; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+.card { display: flex; flex-direction: column; gap: 3px; text-align: left; background: var(--page-panel-2); border: 1px solid var(--page-line); border-radius: 14px; padding: 8px 8px 10px; cursor: pointer; min-width: 0; }
+.card.sel { border-color: var(--page-accent); box-shadow: 0 0 0 1px var(--page-accent) inset; }
+.card-swatch { height: 66px; border-radius: 10px; background: var(--bed); display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
+.card-title { font-weight: 800; font-size: 13px; padding: 0 2px; }
+.card-note { font-size: 11.5px; color: var(--page-muted); padding: 0 2px; }
+.walls { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; }
+.wall-thumb { position: relative; aspect-ratio: 9 / 15; max-width: 100%; border-radius: 12px; overflow: hidden; border: 2px solid transparent; padding: 0; cursor: pointer; background: var(--bed); }
+.wall-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wall-thumb.sel { border-color: var(--page-accent); }
+.wall-name { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 6px 5px; font-size: 10.5px; font-weight: 700; color: #fff; background: linear-gradient(transparent, rgba(0, 0, 0, .6)); text-align: left; line-height: 1.2; }
+.wall-wait { display: grid; place-items: center; height: 100%; font-size: 11px; color: var(--page-muted); }
+.wall-add { border: 1.5px dashed var(--page-muted); display: grid; place-items: center; }
+.wall-add .wall-name { color: var(--page-fg); background: none; }
+.wall-plus { font-size: 28px; color: var(--page-muted); margin-bottom: 18px; }
+.presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.preset { display: flex; flex-direction: column; gap: 7px; text-align: left; background: var(--page-panel-2); border: 1px solid var(--page-line); border-radius: 14px; padding: 10px 12px; cursor: pointer; min-width: 0; }
+.preset.sel { border-color: var(--page-accent); box-shadow: 0 0 0 1px var(--page-accent) inset; }
+.preset-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.preset-row { display: flex; align-items: center; gap: 4px; }
+.preset-tag { width: 36px; font-size: 11px; font-weight: 700; color: var(--page-muted); }
+.preset-dot { width: 17px; height: 17px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .22), 0 1px 2px rgba(0, 0, 0, .2); flex: none; }
+.preset-dot.thread { width: 8px; border-radius: 4px; margin-left: 4px; }
+.cap-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sugg { display: flex; flex-direction: column; gap: 10px; background: var(--page-panel-2); border: 1px solid var(--page-line); border-radius: 14px; padding: 12px; }
+.sugg-clusters { display: flex; height: 16px; border-radius: 6px; overflow: hidden; }
+.sugg-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn { align-self: flex-start; background: var(--page-accent); color: var(--page-on-accent); border: 1px solid transparent; border-radius: 999px; padding: 8px 16px; font-weight: 700; font-size: 13px; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--page-fg); border-color: var(--page-line); }
+.btn.danger { background: var(--page-err); color: var(--page-panel); }
+.link { background: none; border: 0; padding: 0; color: var(--page-accent); font-weight: 700; text-decoration: underline; cursor: pointer; font-size: inherit; }
+.fine { margin: 0; font-size: 12px; color: var(--page-muted); line-height: 1.45; }
+.err { margin: 0; font-size: 12.5px; color: var(--page-err); font-weight: 600; line-height: 1.45; }
+.inline { display: flex; align-items: center; gap: 12px; }
+.inline.wrap { flex-wrap: wrap; }
+.app-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.confirm { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; font-weight: 600; }
+.sample-icon { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.sample-stage { width: 150px; height: 150px; border-radius: 16px; background-size: cover; background-position: center; background-color: var(--bed); display: grid; place-items: center; flex: none; }
+.sample-icon .fine { flex: 1 1 180px; }
+.lab { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
+.lab-stage { width: 230px; height: 240px; border-radius: 18px; background-size: cover; background-position: center; background-color: var(--bed); display: grid; place-items: center; flex: none; max-width: 100%; }
+.lab-layers { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.lab-sizes, .ctl-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.mode-tile { border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.light-tile { background: #e4dfd5; --label: #2b2620; }
+.dark-tile { background: #1b1c1f; --label: #ece6da; }
+.mode-tag { font: 700 11px var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--label); opacity: .75; }
+.lab-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.ctl-demo { display: flex; flex-direction: column; gap: 12px; }
+.ctl-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.tex-card { margin: 0; display: flex; flex-direction: column; gap: 8px; background: var(--bed); border-radius: 14px; padding: 10px; align-items: flex-start; }
+.tex-raw { width: 100%; height: 50px; border-radius: 8px; background-size: auto 100%; }
+.tex-card figcaption, .dye-grid figcaption, .el-grid figcaption { font-size: 11.5px; color: var(--page-muted); line-height: 1.35; }
+.tex-card b { color: var(--page-fg); }
+.dye-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; background: var(--bed); border-radius: 14px; padding: 14px; }
+.dye-grid figure, .el-grid figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.stitch-grid { display: flex; flex-direction: column; gap: 10px; }
+.stitch-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.stitch-row .inline-label { width: 80px; }
+.stitch-demo { overflow: hidden; }
+.el-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 14px; background: var(--bed); border-radius: 14px; padding: 14px; align-items: end; }
+.el-grid img { max-height: 70px; max-width: 100%; }
+.list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; line-height: 1.5; font-size: 13.5px; max-width: 66ch; }
+
+@media (max-width: 520px) {
+  .sec { padding: 16px 14px; }
+  .lab-stage { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .love-on .love-heart { animation: none; }
+  .pager-track, .fswitch-knob, .wall, .patch { transition: none; }
+  .toast, .shade { animation: none; }
+}
+
+</style>
+<div id="root"><p style="padding:24px;font-family:system-ui,sans-serif">Loading the fabric studio…</p></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>
+const { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext, useLayoutEffect, useId } = React, clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+function hexToRgb(h) {
+  h = String(h || "#000").replace("#", ""), h.length === 3 && (h = h.split("").map((c) => c + c).join(""));
+  const n = parseInt(h.slice(0, 6), 16) || 0;
+  return [n >> 16 & 255, n >> 8 & 255, n & 255];
+}
+function rgbToHex(c) {
+  return "#" + c.map((v) => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, "0")).join("");
+}
+function rgbToHsl([r, g, b]) {
+  r /= 255, g /= 255, b /= 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+  let h = 0, s = 0;
+  const l = (mx + mn) / 2;
+  if (mx !== mn) {
+    const d = mx - mn;
+    s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn), mx === r ? h = (g - b) / d + (g < b ? 6 : 0) : mx === g ? h = (b - r) / d + 2 : h = (r - g) / d + 4, h /= 6;
+  }
+  return [h * 360, s, l];
+}
+function hslToRgb([h, s, l]) {
+  if (h = (h % 360 + 360) % 360 / 360, s === 0) return [l * 255, l * 255, l * 255];
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q, f = (t) => (t < 0 && (t += 1), t > 1 && (t -= 1), t < 1 / 6 ? p + (q - p) * 6 * t : t < 1 / 2 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p);
+  return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255];
+}
+const hsl = (h, s, l) => rgbToHex(hslToRgb([h, clamp(s), clamp(l)])), hslOf = (hex) => rgbToHsl(hexToRgb(hex));
+function mix(a, b, t) {
+  const A = hexToRgb(a), B = hexToRgb(b);
+  return rgbToHex(A.map((v, i) => v + (B[i] - v) * t));
+}
+function lum(hex) {
+  const c = hexToRgb(hex).map((v) => (v /= 255, v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+function contrast(a, b) {
+  const A = lum(a), B = lum(b);
+  return (Math.max(A, B) + 0.05) / (Math.min(A, B) + 0.05);
+}
+function inkFor(fab) {
+  const [h, s] = hslOf(fab), dark = hsl(h, Math.min(s, 0.38), 0.17), light = hsl(h, Math.min(s, 0.22), 0.95);
+  return contrast(fab, dark) >= contrast(fab, light) ? dark : light;
+}
+const LIGHT_THREAD = "#f4efe4";
+function shineFor(L) {
+  return L < 0.04 ? 0.62 : L < 0.12 ? 0.48 : L < 0.3 ? 0.32 : L < 0.55 ? 0.22 : 0.15;
+}
+function hashStr(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++)
+    h ^= s.charCodeAt(i), h = Math.imul(h, 16777619);
+  return h >>> 0;
+}
+const isHex = (v) => /^#[0-9a-f]{6}$/i.test(v);
+function threadIdeas(fab, accent) {
+  const [h, s, l] = hslOf(fab), light = lum(fab) > 0.25;
+  return [
+    { id: "tonal", label: "Tonal", hex: light ? hsl(h, clamp(s + 0.14, 0.22, 0.5), clamp(l - 0.32, 0.28, 0.5)) : hsl(h, clamp(s + 0.1, 0.15, 0.4), clamp(l + 0.45, 0.62, 0.8)) },
+    { id: "contrast", label: "Contrast", hex: light ? hsl(h, Math.min(s, 0.3), 0.2) : LIGHT_THREAD },
+    { id: "complement", label: "Complement", hex: hsl(h + 180, clamp(s + 0.25, 0.35, 0.6), light ? 0.4 : 0.66) },
+    { id: "accent", label: "Match accent", hex: accent }
+  ];
+}
+const FABRICS = [
+  { name: "Flax", hex: "#d6c9ae" },
+  { name: "Chalk", hex: "#ebe7dd" },
+  { name: "Stone grey", hex: "#a8a7a1" },
+  { name: "Walnut", hex: "#7b5a3e" },
+  { name: "Charcoal", hex: "#2f3033" },
+  { name: "Navy", hex: "#22324f" },
+  { name: "Olive", hex: "#6f7442" },
+  { name: "Moss green", hex: "#4c7650" },
+  { name: "Brick red", hex: "#9c3b33" },
+  { name: "Plum", hex: "#5f4572" },
+  { name: "Lake blue", hex: "#4a76a6" },
+  { name: "Blush", hex: "#e2b9b3" },
+  { name: "Mustard", hex: "#c79c3e" },
+  { name: "Teal", hex: "#2e706e" }
+], THREADS = [
+  { name: "Ecru", code: "Ecru", hex: "#e8dcc3" },
+  { name: "Winter white", code: "3865", hex: "#f6f2ea" },
+  { name: "Light tan", code: "437", hex: "#c49a69" },
+  { name: "Tan", code: "435", hex: "#9c7b55" },
+  { name: "Dark coffee", code: "801", hex: "#62402a" },
+  { name: "Black brown", code: "3371", hex: "#2c1d14" },
+  { name: "Black", code: "310", hex: "#1c1c1c" },
+  { name: "Red", code: "321", hex: "#c0272e" },
+  { name: "Topaz", code: "725", hex: "#f0b23d" },
+  { name: "Yellow green", code: "3347", hex: "#6d984a" },
+  { name: "Royal blue", code: "796", hex: "#26418d" },
+  { name: "Garnet", code: "815", hex: "#86242f" }
+], ACCENTS = [
+  { name: "Cornflower", hex: "#4a7fc1" },
+  { name: "Poppy", hex: "#cf4436" },
+  { name: "Marigold", hex: "#dc9d2c" },
+  { name: "Fern", hex: "#4c9358" },
+  { name: "Heather", hex: "#8a6bbf" },
+  { name: "Rose", hex: "#d27493" },
+  { name: "Teal", hex: "#2f8b86" },
+  { name: "Rust", hex: "#c0612b" }
+], ROLE_KEYS = ["weather", "love", "calendar", "search", "strip", "clock", "battery", "music", "forecast", "todo", "water", "contacts", "dock"], roleMap = (a) => Object.fromEntries(ROLE_KEYS.map((k, i) => [k, a[i]])), PRESETS = [
+  {
+    id: "classic",
+    name: "Classic linen",
+    material: "linen",
+    light: { fabric: "#d8cbb0", thread: "#b48d60", accent: "#4a7fc1", roles: roleMap(["#d8cbb0", "#e7ddcc", "#d8cbb0", "#e2d7c1", "#d3c4a4", "#d8cbb0", "#e2d7c1", "#d3c5a8", "#d8cbb0", "#e2d7c1", "#d3c5a8", "#d8cbb0", "#cfc1a3"]) },
+    dark: { fabric: "#2f3033", thread: "#c9b28c", accent: "#d0743f", roles: roleMap(["#323337", "#3a2f30", "#2f3033", "#37383d", "#2f3033", "#323337", "#37383d", "#2c2d31", "#323337", "#37383d", "#2c2d31", "#323337", "#28292c"]) }
+  },
+  {
+    id: "velvet",
+    name: "Royal velvet",
+    material: "velvet",
+    light: { fabric: "#dba2a8", thread: "#b8893d", accent: "#9a2c3e", roles: roleMap(["#d99ca3", "#e4cfaa", "#b9a5d8", "#a4bbe0", "#c9ae9a", "#a7c2a0", "#e4cfaa", "#b9a5d8", "#a4bbe0", "#dba2a8", "#a7c2a0", "#e4cfaa", "#c2a996"]) },
+    dark: { fabric: "#3b1520", thread: "#d4a548", accent: "#d4a548", roles: roleMap(["#6a1424", "#5a1220", "#1e2f78", "#1e2f78", "#3a1a26", "#1f4a2c", "#1f4a2c", "#3b1f52", "#3b1f52", "#1b2650", "#1e2f78", "#6a1424", "#2a1820"]) }
+  },
+  {
+    id: "denim",
+    name: "Workshop denim",
+    material: "denim",
+    light: { fabric: "#7f9bbf", thread: "#d98b3a", accent: "#d98b3a", roles: roleMap(["#86a2c4", "#9cb0c8", "#7591b6", "#a3b8d2", "#7f9bbf", "#7f9bbf", "#9cb0c8", "#6f8cb3", "#86a2c4", "#a3b8d2", "#7591b6", "#86a2c4", "#6c87ab"]) },
+    dark: { fabric: "#22385c", thread: "#d98b3a", accent: "#e0a050", roles: roleMap(["#22385c", "#283f66", "#1c2f4f", "#2d4670", "#22385c", "#22385c", "#2d4670", "#1c2f4f", "#22385c", "#2d4670", "#1c2f4f", "#22385c", "#18263f"]) }
+  },
+  {
+    id: "garden",
+    name: "Garden canvas",
+    material: "canvas",
+    light: { fabric: "#e3dac3", thread: "#6f8a4c", accent: "#c0612b", roles: roleMap(["#cddabf", "#ecd3cd", "#e3dac3", "#e8e0cc", "#cdd6b8", "#d9ceb0", "#cddabf", "#c9d5d2", "#cddabf", "#ecd3cd", "#c9d5d2", "#e3dac3", "#c3cfae"]) },
+    dark: { fabric: "#2e3a2d", thread: "#d2c48f", accent: "#d9894a", roles: roleMap(["#334333", "#4a2f2c", "#2e3a2d", "#3a3f2c", "#2e3a2d", "#3e3a28", "#334333", "#2b3a3a", "#334333", "#4a2f2c", "#2b3a3a", "#2e3a2d", "#252f24"]) }
+  }
+], presetPalette = (p, m) => ({ fabric: p[m].fabric, thread: p[m].thread, accent: p[m].accent }), DEFAULTS = {
+  mode: "light",
+  source: "manual",
+  preset: "classic",
+  palettes: { light: presetPalette(PRESETS[0], "light"), dark: presetPalette(PRESETS[0], "dark") },
+  roles: { light: PRESETS[0].light.roles, dark: PRESETS[0].dark.roles },
+  material: "linen",
+  stitch: "running",
+  iconStyle: "dyed",
+  iconShape: "rounded",
+  depth: 60,
+  wallpaper: "alpine",
+  love: !0
+};
+function seeded(seed) {
+  let s = seed >>> 0;
+  return () => (s = s * 1664525 + 1013904223 >>> 0, s / 4294967296);
+}
+function mkCanvas(w, h) {
+  const c = document.createElement("canvas");
+  return c.width = w, c.height = h, c;
+}
+function vgrad(x, H, stops, y0 = 0) {
+  const g = x.createLinearGradient(0, y0, 0, H);
+  return stops.forEach(([o, c]) => g.addColorStop(o, c)), g;
+}
+function ridge(x, W, H, base, amp, rough, color, R) {
+  let arr = [base + (R() - 0.5) * amp, base + (R() - 0.5) * amp], disp = amp;
+  for (let it = 0; it < 8; it++) {
+    const nx = [];
+    for (let i = 0; i < arr.length - 1; i++)
+      nx.push(arr[i]), nx.push((arr[i] + arr[i + 1]) / 2 + (R() - 0.5) * disp);
+    nx.push(arr[arr.length - 1]), arr = nx, disp *= rough;
+  }
+  return x.beginPath(), x.moveTo(0, H), arr.forEach((v, i) => x.lineTo(i / (arr.length - 1) * W, v)), x.lineTo(W, H), x.closePath(), x.fillStyle = color, x.fill(), arr;
+}
+function glow(x, cx, cy, r, c0, c1) {
+  const g = x.createRadialGradient(cx, cy, 0, cx, cy, r);
+  g.addColorStop(0, c0), g.addColorStop(1, c1), x.fillStyle = g, x.fillRect(cx - r, cy - r, r * 2, r * 2);
+}
+function pines(x, W, baseY, count, hmin, hmax, color, R) {
+  x.fillStyle = color;
+  for (let i = 0; i < count; i++) {
+    const px = R() * W, h = hmin + R() * (hmax - hmin), w = h * 0.32, by = baseY + R() * 30;
+    x.beginPath(), x.moveTo(px, by - h);
+    for (let k = 1; k <= 5; k++) {
+      const yy = by - h + h * k / 5;
+      x.lineTo(px + w * k / 5 * 1.1, yy), x.lineTo(px + w * k / 5 * 0.55, yy - 2);
+    }
+    for (let k = 5; k >= 1; k--) {
+      const yy = by - h + h * k / 5;
+      x.lineTo(px - w * k / 5 * 0.55, yy - 2), x.lineTo(px - w * k / 5 * 1.1, yy);
+    }
+    x.closePath(), x.fill(), x.fillRect(px - 2, by - 4, 4, 14);
+  }
+}
+function grain(x, W, H, amt, R) {
+  const im = x.getImageData(0, 0, W, H), d = im.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const n = (R() - 0.5) * amt;
+    d[i] += n, d[i + 1] += n, d[i + 2] += n;
+  }
+  x.putImageData(im, 0, 0);
+}
+function waveLine(x, W, n, f) {
+  x.beginPath();
+  for (let i = 0; i <= n; i++) {
+    const px = i / n * W;
+    x.lineTo(px, f(i));
+  }
+}
+const SCENES = [
+  {
+    id: "alpine",
+    name: "Alpine dusk",
+    draw(x, W, H, R) {
+      x.fillStyle = vgrad(x, H, [[0, "#36416f"], [0.32, "#8a7bb0"], [0.55, "#e79e8c"], [0.66, "#f6cb9c"]]), x.fillRect(0, 0, W, H), glow(x, 360, 700, 300, "rgba(255,224,178,.75)", "rgba(255,224,178,0)"), x.fillStyle = "#fff3dc", x.beginPath(), x.arc(360, 700, 44, 0, 7), x.fill(), ridge(x, W, H, 640, 300, 0.56, "rgba(146,128,176,.95)", R), x.fillStyle = vgrad(x, 940, [[0, "rgba(250,210,190,0)"], [1, "rgba(250,210,190,.35)"]], 640), x.fillRect(0, 640, W, 300), ridge(x, W, H, 790, 230, 0.55, "#6d6195", R), ridge(x, W, H, 900, 170, 0.55, "#4a4171", R), ridge(x, W, H, 1010, 110, 0.5, "#2f2b4d", R), pines(x, W, 1110, 40, 70, 170, "#1d1b32", R);
+    }
+  },
+  {
+    id: "meadow",
+    name: "Wildflower meadow",
+    draw(x, W, H, R) {
+      x.fillStyle = vgrad(x, H, [[0, "#5aa2db"], [0.5, "#cfe8f4"]]), x.fillRect(0, 0, W, H);
+      for (let i = 0; i < 7; i++) {
+        const cx = R() * W, cy = 140 + R() * 380, r = 70 + R() * 90;
+        glow(x, cx, cy, r, "rgba(255,255,255,.75)", "rgba(255,255,255,0)"), glow(x, cx + r * 0.6, cy + 10, r * 0.7, "rgba(255,255,255,.6)", "rgba(255,255,255,0)");
+      }
+      ridge(x, W, H, 640, 90, 0.5, "#9bc47c", R), ridge(x, W, H, 700, 70, 0.5, "#77aa5d", R), x.fillStyle = vgrad(x, H, [[0, "#5b9648"], [1, "#2c5a29"]], 740), x.fillRect(0, 760, W, H), ridge(x, W, H, 760, 40, 0.5, "#5b9648", R);
+      const cols = ["#f4a0bd", "#ffffff", "#f6d55c", "#b58ddb", "#f07f5f", "#fbe8f0"];
+      for (let i = 0; i < 1300; i++) {
+        const y = 740 + Math.pow(R(), 0.8) * (H - 740), t = (y - 740) / (H - 740), px = R() * W, r = 1.2 + t * t * 9;
+        x.strokeStyle = "rgba(40,90,40,.55)", x.lineWidth = 0.6 + t * 1.5, x.beginPath(), x.moveTo(px, y), x.lineTo(px + (R() - 0.5) * 6, y + r * 3 + 4), x.stroke(), x.fillStyle = cols[Math.floor(R() * cols.length)], x.beginPath(), x.arc(px, y, r, 0, 7), x.fill(), r > 3 && (x.fillStyle = "rgba(250,220,90,.9)", x.beginPath(), x.arc(px, y, r * 0.3, 0, 7), x.fill());
+      }
+    }
+  },
+  {
+    id: "coast",
+    name: "Quiet coast",
+    draw(x, W, H, R) {
+      x.fillStyle = vgrad(x, H, [[0, "#8fcbe6"], [0.47, "#f1e5cf"]]), x.fillRect(0, 0, W, H), glow(x, 400, 520, 240, "rgba(255,246,220,.9)", "rgba(255,246,220,0)"), x.fillStyle = vgrad(x, 920, [[0, "#3c86ad"], [1, "#62b3c8"]], 560), x.fillRect(0, 560, W, 360);
+      for (let i = 0; i < 260; i++) {
+        const y = 565 + Math.pow(R(), 1.6) * 300;
+        x.fillStyle = "rgba(255,255,255," + (0.25 + R() * 0.4) + ")", x.fillRect(320 + (R() - 0.5) * (60 + (y - 560) * 0.9), y, 6 + R() * 26, 1.6);
+      }
+      x.fillStyle = vgrad(x, H, [[0, "#ecd6a6"], [1, "#d2b07a"]], 860), x.beginPath(), x.moveTo(0, 900);
+      for (let i = 0; i <= 20; i++) x.lineTo(i / 20 * W, 880 + Math.sin(i * 0.8) * 14 + i * 3);
+      x.lineTo(W, H), x.lineTo(0, H), x.closePath(), x.fill(), x.strokeStyle = "rgba(255,255,255,.8)", x.lineWidth = 3;
+      for (let k = 0; k < 3; k++)
+        waveLine(x, W, 30, (i) => 884 + k * 22 + Math.sin(i * 0.9 + k) * 8 + i * 2.4), x.stroke(), x.lineWidth = 1.8;
+    }
+  },
+  {
+    id: "night",
+    name: "Pine night",
+    draw(x, W, H, R) {
+      x.fillStyle = vgrad(x, H, [[0, "#0a1424"], [0.7, "#21445e"]]), x.fillRect(0, 0, W, H);
+      for (let i = 0; i < 260; i++)
+        x.fillStyle = "rgba(255,255,240," + (0.3 + R() * 0.7) + ")", x.beginPath(), x.arc(R() * W, R() * 700, R() * 1.5 + 0.3, 0, 7), x.fill();
+      glow(x, 380, 250, 170, "rgba(244,236,208,.35)", "rgba(244,236,208,0)"), x.fillStyle = "#f2ead0", x.beginPath(), x.arc(380, 250, 38, 0, 7), x.fill(), ridge(x, W, H, 760, 160, 0.55, "#1b3446", R), pines(x, W, 860, 50, 90, 200, "#132634", R), ridge(x, W, H, 960, 90, 0.5, "#0e1c27", R), pines(x, W, 1060, 34, 160, 320, "#09131b", R);
+    }
+  },
+  {
+    id: "dunes",
+    name: "Terracotta dunes",
+    draw(x, W, H, R) {
+      x.fillStyle = vgrad(x, H, [[0, "#f5dcb2"], [0.5, "#eeb281"]]), x.fillRect(0, 0, W, H), glow(x, 150, 430, 200, "rgba(255,240,208,.8)", "rgba(255,240,208,0)"), x.fillStyle = "#fff1d2", x.beginPath(), x.arc(150, 430, 54, 0, 7), x.fill(), [["#e2a064", 650], ["#cd7f46", 760], ["#ad6033", 880], ["#8b4727", 1010]].forEach(([c, b], j) => {
+        const f = (i) => b + Math.sin(i * 0.17 + j * 2) * 46 + Math.sin(i * 0.41 + j) * 14;
+        x.fillStyle = c, x.beginPath(), x.moveTo(0, H);
+        for (let i = 0; i <= 60; i++) x.lineTo(i / 60 * W, f(i));
+        x.lineTo(W, H), x.closePath(), x.fill(), x.strokeStyle = "rgba(255,225,180,.35)", x.lineWidth = 3, waveLine(x, W, 60, f), x.stroke();
+      });
+    }
+  },
+  {
+    id: "table",
+    name: "Sewing table",
+    draw(x, W, H, R) {
+      x.fillStyle = "#6c4428", x.fillRect(0, 0, W, H);
+      for (let y = 0; y < H; y += 2) {
+        x.strokeStyle = R() < 0.5 ? "rgba(40,20,8," + R() * 0.22 + ")" : "rgba(190,130,80," + R() * 0.16 + ")", x.lineWidth = 1 + R() * 2;
+        const ph = R() * 6;
+        waveLine(x, W, 24, (i) => y + Math.sin(i * 0.5 + ph + y * 4e-3) * 6), x.stroke();
+      }
+      x.fillStyle = vgrad(x, 560, [[0, "rgba(240,232,216,1)"], [0.65, "rgba(232,218,196,.85)"], [1, "rgba(232,218,196,0)"]]), x.fillRect(0, 0, W, 560);
+      for (let i = 0; i < 14; i++) glow(x, R() * W, 80 + R() * 360, 30 + R() * 60, "rgba(255,255,250,.55)", "rgba(255,255,250,0)");
+      glow(x, 90, 900, 260, "rgba(0,0,0,.18)", "rgba(0,0,0,0)");
+    }
+  }
+], wallpaperCache = /* @__PURE__ */ new Map();
+function renderScene(scene) {
+  if (wallpaperCache.has(scene.id)) return wallpaperCache.get(scene.id);
+  const W = 540, H = 1170, c = mkCanvas(W, H), x = c.getContext("2d"), R = seeded(hashStr(scene.id));
+  try {
+    scene.draw(x, W, H, R), grain(x, W, H, 10, R);
+  } catch {
+    x.fillStyle = "#8899aa", x.fillRect(0, 0, W, H);
+  }
+  const url = c.toDataURL("image/jpeg", 0.86);
+  return wallpaperCache.set(scene.id, url), url;
+}
+const analysisCache = /* @__PURE__ */ new Map();
+function kmeans(px, k) {
+  const sorted = [...px].sort((a, b) => a[0] + a[1] + a[2] - (b[0] + b[1] + b[2]));
+  let C = Array.from({ length: k }, (_, i) => [...sorted[Math.floor((i + 0.5) / k * sorted.length)]]);
+  const assign = new Array(px.length).fill(0);
+  for (let it = 0; it < 10; it++) {
+    const sum = C.map(() => [0, 0, 0, 0]);
+    px.forEach((p, i) => {
+      let best = 0, bd = 1e9;
+      C.forEach((c, j) => {
+        const d = (p[0] - c[0]) ** 2 + (p[1] - c[1]) ** 2 + (p[2] - c[2]) ** 2;
+        d < bd && (bd = d, best = j);
+      }), assign[i] = best;
+      const s = sum[best];
+      s[0] += p[0], s[1] += p[1], s[2] += p[2], s[3]++;
+    }), C = C.map((c, j) => sum[j][3] ? [sum[j][0] / sum[j][3], sum[j][1] / sum[j][3], sum[j][2] / sum[j][3]] : c);
+  }
+  const counts = C.map(() => 0);
+  return assign.forEach((a) => counts[a]++), C.map((c, j) => ({ rgb: c, hex: rgbToHex(c), w: counts[j] / px.length })).filter((c) => c.w > 0).sort((a, b) => b.w - a.w);
+}
+function suggestFromClusters(cl, mode) {
+  const hs = cl.map((c) => ({ ...c, h: rgbToHsl(c.rgb) })), dom = hs[0], score = (c) => c.h[1] * (1 - Math.abs(c.h[2] - 0.5) * 1.3) * Math.sqrt(c.w), acc = hs.slice(1).sort((a, b) => score(b) - score(a))[0] || dom, [h, s] = dom.h, [ah, as, al] = acc.h, fabric = mode === "light" ? hsl(h, clamp(s * 0.45, 0.05, 0.3), 0.8) : hsl(h, clamp(s * 0.4, 0.04, 0.26), 0.22), accent = mode === "light" ? hsl(ah, clamp(as, 0.35, 0.72), clamp(al, 0.4, 0.55)) : hsl(ah, clamp(as, 0.35, 0.68), clamp(al, 0.52, 0.64)), thread = mode === "light" ? hsl(h, clamp(s * 0.7 + 0.12, 0.2, 0.5), 0.42) : hsl(h, clamp(s * 0.5 + 0.1, 0.14, 0.38), 0.75);
+  return { fabric, accent, thread, text: inkFor(fabric) };
+}
+function analyzeWallpaper(id, src) {
+  return analysisCache.has(id) ? Promise.resolve(analysisCache.get(id)) : new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const h = Math.max(16, Math.round(48 * img.naturalHeight / Math.max(1, img.naturalWidth))), c = mkCanvas(48, h), x = c.getContext("2d", { willReadFrequently: !0 });
+        x.drawImage(img, 0, 0, 48, h);
+        const d = x.getImageData(0, 0, 48, h).data, px = [];
+        for (let i = 0; i < d.length; i += 4) d[i + 3] > 200 && px.push([d[i], d[i + 1], d[i + 2]]);
+        if (px.length < 20) throw new Error("too few pixels");
+        const clusters = kmeans(px, 6), res = { clusters, samples: px.length, light: suggestFromClusters(clusters, "light"), dark: suggestFromClusters(clusters, "dark") };
+        analysisCache.set(id, res), resolve(res);
+      } catch (e) {
+        reject(e);
+      }
+    }, img.onerror = () => reject(new Error("load failed")), img.src = src;
+  });
+}
+const STORE_KEY = "fabric-ui-settings-v3";
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    return { ...DEFAULTS, ...s, palettes: { ...DEFAULTS.palettes, ...s.palettes || {} }, roles: { ...DEFAULTS.roles, ...s.roles || {} } };
+  } catch {
+    return null;
+  }
+}
+function saveSettings(s) {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(s));
+  } catch {
+  }
+}
+const DPR = 2, MAT_PARAMS = {
+  linen: { src: "assets/linen-height.png", tile: [158, 51], macro: 3, bump: 0.06, alb: 0.025, ks: 0.025, shin: 8, fuzz: 1 / 70, weave: { pitch: 2.6, r: 0.42, slub: 0.32, jitter: 0.5, tone: 0.12, amp: 0.62, tw: 0.22, tf: 2.6, twistH: 0.07, fleck: 0.012, gapK: 0.5 } },
+  canvas: { src: "assets/canvas-height.png", tile: [150, 57], macro: 3, bump: 0.05, alb: 0.02, ks: 0.03, shin: 9, fuzz: 1 / 130, weave: { pitch: 2, r: 0.47, slub: 0.1, jitter: 0.16, tone: 0.06, amp: 0.5, tw: 0.16, tf: 2.8, twistH: 0.05, fleck: 0, gapK: 0.55 } },
+  denim: { src: "assets/denim-height.png", tile: [161, 77], macro: 3, bump: 0.05, alb: 0.03, ks: 0.04, shin: 10, fuzz: 1 / 150, fade: 0.5, weave: { pitch: 1.55, r: 0.48, slub: 0.2, jitter: 0.14, tone: 0.22, amp: 0.42, tw: 0.14, tf: 2.6, twistH: 0.04, fleck: 0, gapK: 0.6, twill: !0, weftC: [214, 214, 206], weftMix: 0.38 } },
+  velvet: { src: "assets/velvet-height.png", tile: [90, 97], macro: 1, bump: 0, alb: 0, velvet: 1, ks: 0, shin: 8, grooveK: 1.8, fuzz: 1 / 700, lint: !0 }
+};
+function hash3(i, j, s) {
+  let h = Math.imul(i | 0, 374761393) + Math.imul(j | 0, 668265263) + Math.imul(s | 0, 1442695041);
+  return h = Math.imul(h ^ h >>> 13, 1274126177), h ^= h >>> 16, (h >>> 0) / 4294967296;
+}
+function vnoise(t, a, s) {
+  const i = Math.floor(t), f = t - i, u = f * f * (3 - 2 * f);
+  return hash3(i, a, s) * (1 - u) + hash3(i + 1, a, s) * u;
+}
+function noise2(x, y, s) {
+  const xi = Math.floor(x), yi = Math.floor(y), fx = x - xi, fy = y - yi, ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy), a = hash3(xi, yi, s), b = hash3(xi + 1, yi, s), c = hash3(xi, yi + 1, s), d = hash3(xi + 1, yi + 1, s);
+  return (a * (1 - ux) + b * ux) * (1 - uy) + (c * (1 - ux) + d * ux) * uy;
+}
+const WV = { h: 0, top: 0, tone: 0.5, tw: 0.5, fleck: 0, gap: 0 };
+function weaveAt(xc, yc, P, scale, seed) {
+  const pw = P.pitch * scale, xj = xc / pw, yj = yc / pw, X = xj + (noise2(xj * 0.06, yj * 0.09, seed) - 0.5) * P.jitter, Y = yj + (noise2(xj * 0.09, yj * 0.06, seed + 1) - 0.5) * P.jitter, i = Math.floor(X), j = Math.floor(Y), u = X - i, v = Y - j, rW = P.r * (1 + P.slub * ((vnoise(Y * 0.5, i, seed) - 0.5) * 1.6 + (hash3(i, 0, seed + 11) - 0.5) * 0.7)), rF = P.r * (1 + P.slub * ((vnoise(X * 0.5, j + 4099, seed) - 0.5) * 1.6 + (hash3(j, 1, seed + 11) - 0.5) * 0.7)), over = P.twill ? ((i - j) % 4 + 4) % 4 !== 0 : (i + j & 1) === 0, du = Math.abs(u - 0.5) / rW, dv = Math.abs(v - 0.5) / rF, pu = du < 1 ? Math.pow(Math.cos(du * 1.5708), 0.65) : 0, pv = dv < 1 ? Math.pow(Math.cos(dv * 1.5708), 0.65) : 0, sw = over ? 1 : -1, hw = pu * (0.55 + 0.4 * sw * Math.sin(Math.PI * v)), hf = pv * (0.55 - 0.4 * sw * Math.sin(Math.PI * u)), m = Math.max(hw, hf), mn = Math.min(hw, hf);
+  WV.h = m + 0.12 * mn * Math.exp(-(m - mn) * 6);
+  let along, across, id;
+  return hw >= hf ? (WV.top = 0, along = Y, across = u - 0.5, id = i) : (WV.top = 1, along = X, across = v - 0.5, id = j + 7919), WV.tone = hash3(id, 2, seed + 3) * 0.65 + vnoise(along * 0.7, id, seed + 4) * 0.35, WV.tw = 0.5 + 0.5 * Math.cos(6.2832 * (along * P.tf + across * P.tf * 1.7 + hash3(id, 5, seed))), WV.fleck = P.fleck && hash3(Math.floor(along * 2.5), id, seed + 9) < P.fleck ? 1 : 0, WV.gap = pu === 0 && pv === 0 ? 1 : 0, WV;
+}
+function pathFit(S) {
+  const P = S.pathSpec, s = Math.min((S.w - 2) / P.bw, (S.h - 2) / P.bh);
+  return { s, ox: (S.w - P.bw * s) / 2 - P.bx * s, oy: (S.h - P.bh * s) / 2 - P.by * s };
+}
+function drawPathStitches(x, kind, S, D, M, sc) {
+  const P = S.pathSpec, f = pathFit(S), bcx = P.bx + P.bw / 2, bcy = P.by + P.bh / 2, cxp = M + f.ox + bcx * f.s, cyp = M + f.oy + bcy * f.s, s2 = f.s * (1 - 2 * S.inset / Math.min(P.bw * f.s, P.bh * f.s));
+  x.setTransform(D * s2, 0, 0, D * s2, (cxp - bcx * s2) * D, (cyp - bcy * s2) * D);
+  const w = 2.4 * sc / s2, per = 8.6 * sc / s2, dash = per * 0.7 - w;
+  x.strokeStyle = "#fff", x.lineCap = "round", x.lineJoin = "round", x.lineWidth = w, x.setLineDash(kind === "cord" ? [] : [Math.max(0.1, dash), per - Math.max(0.1, dash)]), x.stroke(new Path2D(P.d));
+}
+const LIGHT = (() => {
+  const v = [-0.42, -0.58, 0.7], l = Math.hypot(...v);
+  return v.map((a) => a / l);
+})(), HALFV = (() => {
+  const v = [LIGHT[0], LIGHT[1], LIGHT[2] + 1], l = Math.hypot(...v);
+  return v.map((a) => a / l);
+})(), TEXDATA = {};
+let texPromise = null;
+function loadTex() {
+  return texPromise || (texPromise = Promise.all(Object.entries(MAT_PARAMS).map(([k, m]) => new Promise((res) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const c = mkCanvas(img.naturalWidth, img.naturalHeight), x = c.getContext("2d", { willReadFrequently: !0 });
+        x.drawImage(img, 0, 0);
+        const d = x.getImageData(0, 0, c.width, c.height).data, f = new Float32Array(c.width * c.height);
+        for (let i = 0; i < f.length; i++) f[i] = (d[i * 4] - 128) / 38;
+        TEXDATA[k] = { w: c.width, h: c.height, f };
+      } catch {
+      }
+      res();
+    }, img.onerror = () => res(), img.src = m.src;
+  }))), texPromise);
+}
+function fallbackTex() {
+  if (TEXDATA._fb) return TEXDATA._fb;
+  const w = 64, h = 64, f = new Float32Array(w * h), R = seeded(7);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) f[y * w + x] = 0.9 * Math.sin(x * Math.PI / 2) * Math.sin(y * Math.PI / 2) + (R() - 0.5);
+  return TEXDATA._fb = { w, h, f };
+}
+const INF = 1e20;
+function edt1d(f, n, d, v, z) {
+  let k = 0;
+  v[0] = 0, z[0] = -INF, z[1] = INF;
+  for (let q = 1; q < n; q++) {
+    let s = (f[q] + q * q - (f[v[k]] + v[k] * v[k])) / (2 * q - 2 * v[k]);
+    for (; s <= z[k]; )
+      k--, s = (f[q] + q * q - (f[v[k]] + v[k] * v[k])) / (2 * q - 2 * v[k]);
+    k++, v[k] = q, z[k] = s, z[k + 1] = INF;
+  }
+  k = 0;
+  for (let q = 0; q < n; q++) {
+    for (; z[k + 1] < q; ) k++;
+    const dq = q - v[k];
+    d[q] = dq * dq + f[v[k]];
+  }
+}
+function edt(mask, W, H) {
+  const n = Math.max(W, H), f = new Float64Array(n), d = new Float64Array(n), v = new Int32Array(n), z = new Float64Array(n + 1), g = new Float64Array(W * H);
+  for (let i = 0; i < W * H; i++) g[i] = mask[i] > 0.5 ? INF : 0;
+  for (let x = 0; x < W; x++) {
+    for (let y = 0; y < H; y++) f[y] = g[y * W + x];
+    edt1d(f, H, d, v, z);
+    for (let y = 0; y < H; y++) g[y * W + x] = d[y];
+  }
+  const out = new Float32Array(W * H);
+  for (let y = 0; y < H; y++) {
+    const r = y * W;
+    for (let x = 0; x < W; x++) f[x] = g[r + x];
+    edt1d(f, W, d, v, z);
+    for (let x = 0; x < W; x++) {
+      const m = mask[r + x];
+      out[r + x] = m > 0.5 ? Math.sqrt(d[x]) - 1 + m : 0;
+    }
+  }
+  return out;
+}
+function boxBlur(src, W, H, r) {
+  if (r < 1) return src;
+  const tmp = new Float32Array(W * H), out = new Float32Array(W * H), iv = 1 / (2 * r + 1);
+  for (let y = 0; y < H; y++) {
+    const row = y * W;
+    let acc = 0;
+    for (let x = -r; x <= r; x++) acc += src[row + Math.min(W - 1, Math.max(0, x))];
+    for (let x = 0; x < W; x++)
+      tmp[row + x] = acc * iv, acc += src[row + Math.min(W - 1, x + r + 1)] - src[row + Math.max(0, x - r)];
+  }
+  for (let x = 0; x < W; x++) {
+    let acc = 0;
+    for (let y = -r; y <= r; y++) acc += tmp[Math.min(H - 1, Math.max(0, y)) * W + x];
+    for (let y = 0; y < H; y++)
+      out[y * W + x] = acc * iv, acc += tmp[Math.min(H - 1, y + r + 1) * W + x] - tmp[Math.max(0, y - r) * W + x];
+  }
+  return out;
+}
+function gblur(src, W, H, sigma) {
+  const r = Math.max(1, Math.round(sigma));
+  return boxBlur(boxBlur(boxBlur(src, W, H, r), W, H, r), W, H, r);
+}
+function shiftArr(src, W, H, dx, dy) {
+  const out = new Float32Array(W * H);
+  for (let y = 0; y < H; y++) {
+    const sy = y - dy;
+    if (!(sy < 0 || sy >= H))
+      for (let x = 0; x < W; x++) {
+        const sx = x - dx;
+        sx >= 0 && sx < W && (out[y * W + x] = src[sy * W + sx]);
+      }
+  }
+  return out;
+}
+function sdRR(px, py, cx, cy, hw, hh, r) {
+  const qx = Math.abs(px - cx) - (hw - r), qy = Math.abs(py - cy) - (hh - r);
+  return -(Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r);
+}
+function rrPath2D(x, y, w, h, r) {
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  const p = new Path2D();
+  return p.moveTo(x + r, y), p.lineTo(x + w - r, y), p.arc(x + w - r, y + r, r, -Math.PI / 2, 0), p.lineTo(x + w, y + h - r), p.arc(x + w - r, y + h - r, r, 0, Math.PI / 2), p.lineTo(x + r, y + h), p.arc(x + r, y + h - r, r, Math.PI / 2, Math.PI), p.lineTo(x, y + r), p.arc(x + r, y + r, r, Math.PI, Math.PI * 1.5), p.closePath(), p;
+}
+const THREAD_R = { running: 1.4, double: 1, blanket: 0.8, cord: 1.9 }, PLY = { running: 1.9, double: 1.6, blanket: 1.5, cord: 2.4 };
+function drawStitches(x, kind, sr, sc) {
+  x.strokeStyle = "#fff", x.lineJoin = "round";
+  const dashed = (ins, width, period, ratio, offFrac = 0) => {
+    const rr = { x: sr.x + ins, y: sr.y + ins, w: sr.w - 2 * ins, h: sr.h - 2 * ins, r: Math.max(1, sr.r - ins) }, L = rrLen(rr.w, rr.h, rr.r), n = Math.max(4, Math.round(L / period)), P = L / n, dash = Math.max(0.2, P * ratio - width);
+    x.lineWidth = width, x.lineCap = "round", x.setLineDash([dash, P - dash]), x.lineDashOffset = -(width / 2) - offFrac * P, x.stroke(rrPath2D(rr.x, rr.y, rr.w, rr.h, rr.r));
+  };
+  if (kind === "double") {
+    dashed(0, 2 * sc, 7.6 * sc, 0.68), dashed(4 * sc, 2 * sc, 7.6 * sc, 0.68, 0.5);
+    return;
+  }
+  if (kind === "blanket") {
+    const ins = -1.8 * sc, rr = { x: sr.x + ins, y: sr.y + ins, w: sr.w - 2 * ins, h: sr.h - 2 * ins, r: sr.r - ins };
+    x.setLineDash([]), x.lineWidth = 1.6 * sc, x.lineCap = "round", x.stroke(rrPath2D(rr.x, rr.y, rr.w, rr.h, rr.r));
+    const L = rrLen(rr.w, rr.h, rr.r), n = Math.max(6, Math.round(L / (5.4 * sc)));
+    for (let i = 0; i < n; i++) {
+      const [px, py, nx, ny] = rrPoint(rr.x, rr.y, rr.w, rr.h, rr.r, (i + 0.5) / n * L);
+      x.beginPath(), x.moveTo(px, py), x.lineTo(px - nx * 5 * sc, py - ny * 5 * sc), x.stroke();
+    }
+    return;
+  }
+  if (kind === "cord") {
+    x.setLineDash([]), x.lineWidth = 3.8 * sc, x.lineCap = "round", x.stroke(rrPath2D(sr.x, sr.y, sr.w, sr.h, sr.r));
+    return;
+  }
+  dashed(0, 2.6 * sc, 9.6 * sc, 0.7);
+}
+const svgImgCache = /* @__PURE__ */ new Map(), imgCache = /* @__PURE__ */ new Map();
+function svgImage(inner, px) {
+  const key = px + "|" + inner;
+  if (svgImgCache.has(key)) return svgImgCache.get(key);
+  const p = new Promise((res) => {
+    const img = new Image();
+    img.onload = () => res(img), img.onerror = () => res(null), img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="${px}" height="${px}">${inner}</svg>`);
+  });
+  return svgImgCache.set(key, p), p;
+}
+function loadImg(src) {
+  if (imgCache.has(src)) return imgCache.get(src);
+  const p = new Promise((res) => {
+    const i = new Image();
+    i.onload = () => res(i), i.onerror = () => res(null), i.src = src;
+  });
+  return imgCache.set(src, p), p;
+}
+const THREAD_FONT = 'Fredoka, "Nunito Sans", "Segoe UI", sans-serif';
+async function drawMarks(x, marks, D, M) {
+  for (const m of marks)
+    if (m.k === "svg") {
+      const px = Math.round(m.size * D), img = await svgImage(m.svg, px);
+      img && x.drawImage(img, (M + m.x) * D, (M + m.y) * D, px, px);
+    } else if (m.k === "text") {
+      const wt = m.weight || 600;
+      try {
+        await document.fonts.load(`${wt} ${m.size}px Fredoka`);
+      } catch {
+      }
+      x.font = `${wt} ${m.size * D}px ${THREAD_FONT}`, x.fillStyle = m.color, x.textAlign = m.align || "left", x.textBaseline = "alphabetic", "letterSpacing" in x && (x.letterSpacing = (m.ls || 0) * D + "px"), x.fillText(m.text, (M + m.x) * D, (M + m.y) * D), "letterSpacing" in x && (x.letterSpacing = "0px");
+    } else if (m.k === "img") {
+      const img = await loadImg(m.src);
+      if (!img) continue;
+      const s = Math.min(m.w / img.naturalWidth, m.h / img.naturalHeight), w = img.naturalWidth * s, h = img.naturalHeight * s;
+      x.drawImage(img, (M + m.x + (m.w - w) / 2) * D, (M + m.y + (m.h - h) / 2) * D, w * D, h * D);
+    }
+}
+function parseDye(dye, w, h, M) {
+  if (!dye) return null;
+  const a = (dye.angle || 45) * Math.PI / 180, dx = Math.sin(a), dy = -Math.cos(a), half = (Math.abs(w * dx) + Math.abs(h * dy)) / 2, stops = dye.stops.map(([o, c]) => [o, hexToRgb(c)]);
+  return (xc, yc) => {
+    let t = (((xc - M - w / 2) * dx + (yc - M - h / 2) * dy) / half + 1) / 2;
+    t = clamp(t);
+    for (let i = 1; i < stops.length; i++) if (t <= stops[i][0]) {
+      const [o0, c0] = stops[i - 1], [o1, c1] = stops[i], u = (t - o0) / Math.max(1e-6, o1 - o0);
+      return [c0[0] + (c1[0] - c0[0]) * u, c0[1] + (c1[1] - c0[1]) * u, c0[2] + (c1[2] - c0[2]) * u];
+    }
+    return stops[stops.length - 1][1];
+  };
+}
+async function renderPatch(S) {
+  await loadTex();
+  const D = S.dpr, k = S.depth, L = S.layers || {}, showBase = L.base !== !1 && !S.bare, showTex = L.texture !== !1 && !S.bare, showPad = L.pad !== !1 && !S.bare, showStitch = L.stitch !== !1 && S.stitch !== "none" && !S.bare, showMarks = L.logo !== !1 && S.marks && S.marks.length, showEmb = L.emb !== !1, raised = S.raised && showPad, M = S.raised || S.bare ? Math.ceil(5 + 9 * k) : 2, W = Math.ceil((S.w + 2 * M) * D), H = Math.ceil((S.h + 2 * M) * D), N = W * H, hw = S.w / 2, hh = S.h / 2, cx = M + hw, cy = M + hh, md = Math.min(hw, hh), rad = S.shape === "circle" || S.shape === "pill" ? md : Math.min(S.r, md), SH = S.mode === "dark" ? 1.3 : 1, sd = new Float32Array(N);
+  if (S.shape === "scallop" || S.shape === "path") {
+    const c = mkCanvas(W, H), x = c.getContext("2d", { willReadFrequently: !0 });
+    if (S.shape === "path") {
+      const f = pathFit(S);
+      x.setTransform(D * f.s, 0, 0, D * f.s, (M + f.ox) * D, (M + f.oy) * D), x.fill(new Path2D(S.pathSpec.d));
+    } else
+      x.setTransform(D, 0, 0, D, M * D, M * D), x.fill(new Path2D(scallopPath(S.w, S.h)));
+    const a = x.getImageData(0, 0, W, H).data, m = new Float32Array(N), inv = new Float32Array(N);
+    for (let i = 0; i < N; i++)
+      m[i] = a[i * 4 + 3] / 255, inv[i] = 1 - m[i];
+    const di = edt(m, W, H), dout = edt(inv, W, H);
+    for (let i = 0; i < N; i++) sd[i] = (di[i] > 0 ? di[i] - 0.5 : -dout[i] + 0.5) / D;
+  } else
+    for (let y = 0; y < H; y++) {
+      const py = (y + 0.5) / D;
+      for (let x = 0; x < W; x++) sd[y * W + x] = sdRR((x + 0.5) / D, py, cx, cy, hw, hh, rad);
+    }
+  const sins = S.inset + (S.shape === "scallop" ? 4 : 0), sc = S.sscale, srect = { x: M + sins, y: M + sins, w: S.w - 2 * sins, h: S.h - 2 * sins, r: S.shape === "circle" || S.shape === "pill" ? Math.min(S.w, S.h) / 2 - sins : Math.max(1.5, (S.shape === "scallop" ? 18 : rad) - sins) };
+  let tm = null, tdt = null;
+  const kind = S.stitch, tr = (THREAD_R[kind] || 1.4) * sc, ply = (PLY[kind] || 1.9) * sc;
+  if (showStitch) {
+    const c = mkCanvas(W, H), x = c.getContext("2d", { willReadFrequently: !0 });
+    S.shape === "path" ? drawPathStitches(x, kind, S, D, M, sc) : (x.setTransform(D, 0, 0, D, 0, 0), drawStitches(x, kind, srect, sc));
+    const a = x.getImageData(0, 0, W, H).data;
+    tm = new Float32Array(N);
+    for (let i = 0; i < N; i++) tm[i] = a[i * 4 + 3] / 255;
+    tdt = edt(tm, W, H);
+  }
+  let lm = null, lrgb = null, ldt = null, flatMarks = null;
+  if (showMarks) {
+    const c = mkCanvas(W, H), x = c.getContext("2d", { willReadFrequently: !0 });
+    await drawMarks(x, S.marks, D, M);
+    try {
+      const a = x.getImageData(0, 0, W, H).data;
+      lm = new Float32Array(N), lrgb = new Uint8ClampedArray(N * 3);
+      for (let i = 0; i < N; i++)
+        lm[i] = a[i * 4 + 3] / 255, lrgb[i * 3] = a[i * 4], lrgb[i * 3 + 1] = a[i * 4 + 1], lrgb[i * 3 + 2] = a[i * 4 + 2];
+      ldt = edt(lm, W, H);
+    } catch {
+      lm = null, flatMarks = c;
+    }
+  }
+  const mp = MAT_PARAMS[S.material] || MAT_PARAMS.linen, tex = TEXDATA[S.material] || fallbackTex(), tsx = tex.w / (mp.tile[0] * S.tex), tsy = tex.h / (mp.tile[1] * S.tex), ox = S.seed * 37 % tex.w, oy = S.seed * 53 % tex.h, sampleTex = (xc, yc) => {
+    let u = xc * tsx + ox, v = yc * tsy + oy;
+    u = (u % tex.w + tex.w) % tex.w, v = (v % tex.h + tex.h) % tex.h;
+    const x0 = Math.floor(u), y0 = Math.floor(v), x1 = (x0 + 1) % tex.w, y1 = (y0 + 1) % tex.h, fx = u - x0, fy = v - y0, f = tex.f;
+    return (f[y0 * tex.w + x0] * (1 - fx) + f[y0 * tex.w + x1] * fx) * (1 - fy) + (f[y1 * tex.w + x0] * (1 - fx) + f[y1 * tex.w + x1] * fx) * fy;
+  }, Hp = k * clamp(md * 0.1, 1.6, 4.6), edgeW = clamp(md * 0.24, 3, 9), G = k * 0.95 * (mp.grooveK || 1), gs = 1.5 * sc * (mp.grooveK ? 1.3 : 1), bulge = k * clamp(md * 0.03, 0.4, 1.4), rl = S.relief || 1.8, lh = (0.55 + 0.8 * k) * rl * 0.75, WA = new Float32Array(N).fill(1), WT = new Uint8Array(N), FD = new Float32Array(N), CR = new Float32Array(N), HP = new Float32Array(N), T = new Float32Array(N), Ht = new Float32Array(N), TW = new Float32Array(N), HL = new Float32Array(N), SA = new Float32Array(N), Htot = new Float32Array(N), A = new Float32Array(N), s1 = S.seed % 17 * 0.37, s2 = S.seed % 13 * 0.51, scx = srect.x + srect.w / 2, scy = srect.y + srect.h / 2;
+  for (let y = 0; y < H; y++) {
+    const yc = (y + 0.5) / D;
+    for (let x = 0; x < W; x++) {
+      const i = y * W + x, xc = (x + 0.5) / D, s = sd[i], a = clamp(s * D + 0.5);
+      A[i] = showBase ? a : 0;
+      let hgt = 0;
+      if (s > -1.5) {
+        const din = Math.max(0, s);
+        if (showPad) {
+          const q = Math.min(din / edgeW, 1);
+          if (hgt = Hp * Math.sqrt(1 - (1 - q) * (1 - q)) + bulge * (1 - Math.exp(-din / (md * 0.5))), S.raised || (hgt = -hgt * 0.6), showStitch) {
+            const gd = S.shape === "path" ? Math.abs(s - S.inset) : Math.abs(sdRR(xc, yc, scx, scy, srect.w / 2, srect.h / 2, srect.r));
+            S.raised && (hgt -= G * Math.exp(-gd * gd / (2 * gs * gs))), FD[i] = Math.exp(-gd * gd / (18 * sc * sc));
+          }
+        }
+        if (showTex) {
+          const mc = mp.macro || 1, t = sampleTex(xc / mc, yc / mc);
+          if (T[i] = t, hgt += mp.bump * t * 0.5, mp.weave) {
+            const P = mp.weave, wv = weaveAt(xc, yc, P, S.tex, S.seed);
+            hgt += wv.h * P.amp + (wv.gap ? 0 : (wv.tw - 0.5) * P.twistH), WA[i] = (1 + P.tone * (wv.tone - 0.5) * 2) * (1 + P.tw * (wv.tw - 0.5)) * (wv.gap ? P.gapK : 0.72 + 0.28 * Math.min(1, wv.h * 1.6)) * (wv.fleck ? 0.62 : 1), WT[i] = wv.top;
+          } else if (mp.velvet) {
+            const cr = noise2(xc * 0.035 + noise2(xc * 0.018, yc * 0.018, S.seed + 7) * 2.2, yc * 0.07, S.seed + 5), tuft = noise2(xc * 0.9, yc * 0.9, S.seed + 12), grain2 = hash3(x, y, S.seed);
+            CR[i] = cr, WA[i] = (0.8 + 0.34 * cr) * (0.88 + 0.2 * tuft) * (0.9 + 0.2 * grain2), HP[i] = hgt, hgt += 0.02 * (tuft - 0.5);
+          }
+        }
+      }
+      let h = hgt;
+      if (tm && tm[i] > 0) {
+        const dd = tdt[i] / D, q = Math.min(dd / tr, 1), prof = Math.sqrt(1 - (1 - q) * (1 - q)), xl = x > 0 ? i - 1 : i, xr = x < W - 1 ? i + 1 : i, yu = y > 0 ? i - W : i, ydn = y < H - 1 ? i + W : i;
+        let tx = -(sd[ydn] - sd[yu]), ty = sd[xr] - sd[xl];
+        const tl = Math.hypot(tx, ty) || 1;
+        tx /= tl, ty /= tl, (tx < 0 || tx === 0 && ty < 0) && (tx = -tx, ty = -ty);
+        const tw = 0.5 + 0.5 * Math.cos(2 * Math.PI * ((xc * tx + yc * ty) / ply + (1 - q) * 0.55));
+        TW[i] = tw, Ht[i] = tr * 1.1 * prof * (0.86 + 0.14 * tw) * (0.7 + 0.3 * k), h += tm[i] * Ht[i];
+      }
+      if (lm && lm[i] > 0) {
+        const dd = ldt[i] / D, q = Math.min(dd / rl, 1), prof = Math.sqrt(1 - (1 - q) * (1 - q)), xl = x > 0 ? i - 1 : i, xr = x < W - 1 ? i + 1 : i, yu = y > 0 ? i - W : i, ydn = y < H - 1 ? i + W : i;
+        let gx = ldt[xr] - ldt[xl], gy = ldt[ydn] - ldt[yu];
+        const gl = Math.hypot(gx, gy);
+        let tx = 0.6, ty = 0.8;
+        gl > 0.2 && (tx = -gy / gl, ty = gx / gl, (tx < 0 || tx === 0 && ty < 0) && (tx = -tx, ty = -ty));
+        const sat = 0.5 + 0.5 * Math.cos(2 * Math.PI * (xc * tx + yc * ty) / (S.satin || 1.05));
+        SA[i] = sat, HL[i] = showEmb ? lh * prof * (0.88 + 0.12 * sat) + 0.25 : 0.05, h += lm[i] * HL[i];
+      }
+      Htot[i] = h;
+    }
+  }
+  let cast = null, ao = null;
+  if (tm || lm) {
+    const raisedM = new Float32Array(N);
+    for (let i = 0; i < N; i++) raisedM[i] = Math.max(tm ? tm[i] * Math.min(1, Ht[i] / tr) : 0, lm ? lm[i] * Math.min(1, HL[i] / Math.max(0.4, lh)) : 0);
+    cast = gblur(shiftArr(raisedM, W, H, Math.round(0.9 * k * D), Math.round(1.3 * k * D)), W, H, 0.9 * D), ao = gblur(raisedM, W, H, 2 * D);
+  }
+  const base = hexToRgb(S.fab), thr = hexToRgb(S.thread), dyeAt = parseDye(S.dye, S.w, S.h, M), bHsl = rgbToHsl(base), fadeC = hslToRgb([bHsl[0], bHsl[1] * 0.55, Math.min(0.82, bHsl[2] + 0.3)]), velHi = hslToRgb([bHsl[0], Math.min(1, bHsl[1] * 1.05 + 0.06), Math.min(0.7, bHsl[2] + 0.26)]), LXY = Math.hypot(LIGHT[0], LIGHT[1]), velLum = lum(S.fab), velBody = velLum > 0.22 ? 0.52 : velLum > 0.1 ? 0.36 : 0.27, velCrush = velLum > 0.22 ? 0.55 : 1, AMB = 0.36, LX = LIGHT[0], LY = LIGHT[1], LZ = LIGHT[2], HX = HALFV[0], HY = HALFV[1], HZ = HALFV[2], body = new Uint8ClampedArray(N * 4), g2 = D / 2;
+  for (let y = 0; y < H; y++) {
+    const yc = (y + 0.5) / D;
+    for (let x = 0; x < W; x++) {
+      const i = y * W + x, tA = tm ? tm[i] : 0, lA = lm ? lm[i] : 0, cov = Math.max(A[i], S.bare || !showBase ? Math.max(tA, lA) : 0);
+      if (cov <= 0) continue;
+      const xc = (x + 0.5) / D, xl = x > 0 ? i - 1 : i, xr = x < W - 1 ? i + 1 : i, yu = y > 0 ? i - W : i, ydn = y < H - 1 ? i + W : i;
+      let nx = -(Htot[xr] - Htot[xl]) * g2, ny = -(Htot[ydn] - Htot[yu]) * g2;
+      const nl = Math.hypot(nx, ny, 1);
+      nx /= nl, ny /= nl;
+      const nz = 1 / nl, lam = Math.max(0, nx * LX + ny * LY + nz * LZ) / LZ, shade = AMB + (1 - AMB) * lam, hd = Math.max(0, nx * HX + ny * HY + nz * HZ);
+      let r = 0, g = 0, b = 0;
+      if (A[i] > 0) {
+        const c = dyeAt ? dyeAt(xc, yc) : base, t = T[i], mott = 1 + 0.012 * Math.sin(xc * 0.045 + s1) * Math.sin(yc * 0.06 + s2);
+        let fr = c[0], fg = c[1], fb = c[2];
+        if (mp.weave && mp.weave.twill && WT[i] === 1) {
+          const w = mp.weave.weftMix, wc = mp.weave.weftC;
+          fr += (wc[0] - fr) * w, fg += (wc[1] - fg) * w, fb += (wc[2] - fb) * w;
+        }
+        if (mp.fade) {
+          const f = mp.fade * clamp(Math.exp(-Math.max(0, sd[i]) / 3) + FD[i] * 0.6) * (0.6 + 0.4 * WA[i]);
+          fr += (fadeC[0] - fr) * f, fg += (fadeC[1] - fg) * f, fb += (fadeC[2] - fb) * f;
+        }
+        const albk = WA[i] * (1 + mp.alb * clamp(t, -2.5, 2.5)) * mott * (1 - 0.07 * Math.exp(-Math.max(0, sd[i]) / 1.3));
+        let sh = shade, hi = 0;
+        if (mp.velvet) {
+          const cr = CR[i];
+          let px_ = -(HP[xr] - HP[xl]) * g2, py_ = -(HP[ydn] - HP[yu]) * g2;
+          const pl = Math.hypot(px_, py_, 1);
+          px_ /= pl, py_ /= pl;
+          const slope = Math.hypot(px_, py_), toward = slope > 1e-3 ? clamp(0.5 + 0.5 * (px_ * LX + py_ * LY) / (slope * LXY)) : 0.5, lamP = Math.max(0, px_ * LX + py_ * LY + LZ / pl) / LZ;
+          sh = (velBody + 0.3 * lamP) * (0.84 + 0.36 * cr * velCrush) * (0.9 + 0.1 * lam), hi = clamp(Math.pow(Math.min(1, slope * 1.7), 0.85) * (0.25 + 1.15 * toward) * (0.65 + 0.7 * cr) * 1.3 + 0.16 * cr * cr);
+        }
+        cast && (sh *= (1 - 0.55 * Math.min(1, k) * cast[i] * (1 - tA) * (1 - lA)) * (1 - 0.14 * ao[i] * (1 - tA) * (1 - lA)));
+        const sp = mp.ks * Math.pow(hd, mp.shin) * 255;
+        if (r = fr * albk * sh + sp, g = fg * albk * sh + sp, b = fb * albk * sh + sp, hi > 0) {
+          const hk = hi * 0.72 * (cast ? 1 - 0.6 * cast[i] : 1);
+          r += (velHi[0] * (0.8 + 0.3 * WA[i]) - r) * hk, g += (velHi[1] * (0.8 + 0.3 * WA[i]) - g) * hk, b += (velHi[2] * (0.8 + 0.3 * WA[i]) - b) * hk;
+        }
+      }
+      if (tA > 0) {
+        const tw = TW[i], al = 0.78 + 0.32 * tw, sp = 0.32 * Math.pow(hd, 22) * (0.55 + 0.45 * tw) * 255;
+        let sh = shade;
+        lA > 0 && cast && (sh *= 1);
+        const tr_ = thr[0] * al * sh + sp, tg_ = thr[1] * al * sh + sp, tb_ = thr[2] * al * sh + sp;
+        r += (tr_ - r) * tA, g += (tg_ - g) * tA, b += (tb_ - b) * tA;
+      }
+      if (lA > 0) {
+        const sat = SA[i], al = showEmb ? 0.8 + 0.26 * sat : 1, sp = showEmb ? 0.3 * Math.pow(hd, 20) * (0.5 + 0.5 * sat) * 255 : 0, sh = showEmb ? shade : 1, lr = lrgb[i * 3] * al * sh + sp, lg = lrgb[i * 3 + 1] * al * sh + sp, lb = lrgb[i * 3 + 2] * al * sh + sp;
+        r += (lr - r) * lA, g += (lg - g) * lA, b += (lb - b) * lA;
+      }
+      const o = i * 4;
+      body[o] = r, body[o + 1] = g, body[o + 2] = b, body[o + 3] = cov * 255;
+    }
+  }
+  const out = mkCanvas(W, H), ox2 = out.getContext("2d");
+  if (raised && showBase || S.bare || !showBase && (tm || lm)) {
+    let src = A;
+    if (!showBase || S.bare) {
+      src = new Float32Array(N);
+      for (let i = 0; i < N; i++) src[i] = Math.max(tm ? tm[i] : 0, lm ? lm[i] : 0);
+    }
+    const big = !showBase || S.bare ? null : gblur(shiftArr(src, W, H, Math.round(1.3 * k * D), Math.round(3.6 * k * D)), W, H, 3.6 * k * D), near = gblur(shiftArr(src, W, H, Math.round((S.bare ? 0.7 : 0.2) * k * D), Math.round((S.bare ? 1.1 : 0.9) * D)), W, H, (S.bare ? 0.8 : 1.1) * D), shImg = ox2.createImageData(W, H), sdta = shImg.data;
+    for (let i = 0; i < N; i++) {
+      const s = 1 - (1 - (big ? big[i] * 0.46 * SH * Math.min(1.2, k) : 0)) * (1 - near[i] * (S.bare ? 0.42 : 0.38) * SH);
+      sdta[i * 4 + 3] = clamp(s) * 255;
+    }
+    ox2.putImageData(shImg, 0, 0);
+  }
+  if (raised && showBase && S.fray > 0 && S.shape !== "scallop" && S.shape !== "path") {
+    const R = seeded(S.seed * 7919 + 13), P = rrLen(S.w, S.h, rad), n = Math.round(S.fray * P / 2.4);
+    ox2.save(), ox2.setTransform(D, 0, 0, D, 0, 0), ox2.lineCap = "round";
+    for (let j = 0; j < n; j++) {
+      const [px, py, nx, ny] = rrPoint(M, M, S.w, S.h, rad, R() * P), long = R() < 0.025, len = long ? 2.4 + R() * 2.4 : 0.6 + R() * 1.4, ang = (R() - 0.5) * 1.1, ca = Math.cos(ang), sa = Math.sin(ang), dx = nx * ca - ny * sa, dy = nx * sa + ny * ca, bx = px - nx * 0.7, by = py - ny * 0.7, c = dyeAt ? rgbToHex(dyeAt(px, py)) : S.fab;
+      ox2.strokeStyle = mix(c, R() < 0.8 ? "#ffffff" : "#000000", R() < 0.8 ? 0.08 + R() * 0.16 : 0.08), ox2.globalAlpha = 0.4 + R() * 0.35, ox2.lineWidth = 0.3 + R() * 0.35, ox2.beginPath(), ox2.moveTo(bx, by), ox2.quadraticCurveTo(bx + dx * len * 0.5 + (R() - 0.5) * 1.4, by + dy * len * 0.5 + (R() - 0.5) * 1.4, bx + dx * len, by + dy * len), ox2.stroke();
+    }
+    ox2.restore();
+  }
+  if (mp.velvet && raised && showBase && showTex) {
+    const edge = [];
+    for (let i = 0; i < N; i += 2) {
+      const s = sd[i];
+      s > -0.2 && s < 0.5 && edge.push(i);
+    }
+    const R = seeded(S.seed * 131 + 3), n = Math.min(edge.length, Math.round(rrLen(S.w, S.h, rad) * 1.6)), fz = hslToRgb([bHsl[0], bHsl[1], Math.min(0.6, bHsl[2] + 0.08)]);
+    ox2.save(), ox2.setTransform(D, 0, 0, D, 0, 0), ox2.lineCap = "round", ox2.strokeStyle = rgbToHex(fz);
+    for (let j = 0; j < n; j++) {
+      const i = edge[Math.floor(R() * edge.length)], x = i % W, y = i / W | 0, xl = x > 0 ? i - 1 : i, xr = x < W - 1 ? i + 1 : i, yu = y > 0 ? i - W : i, ydn = y < H - 1 ? i + W : i;
+      let gx = sd[xl] - sd[xr], gy = sd[yu] - sd[ydn];
+      const gl = Math.hypot(gx, gy) || 1;
+      gx /= gl, gy /= gl;
+      const px = (x + 0.5) / D, py = (y + 0.5) / D, L2 = 0.4 + R() * 1.1, a = (R() - 0.5) * 0.9, ca = Math.cos(a), sa = Math.sin(a), dx = gx * ca - gy * sa, dy = gx * sa + gy * ca;
+      ox2.globalAlpha = 0.35 + R() * 0.4, ox2.lineWidth = 0.3 + R() * 0.25, ox2.beginPath(), ox2.moveTo(px - dx * 0.4, py - dy * 0.4), ox2.lineTo(px + dx * L2, py + dy * L2), ox2.stroke();
+    }
+    ox2.restore();
+  }
+  const bc = mkCanvas(W, H);
+  if (bc.getContext("2d").putImageData(new ImageData(body, W, H), 0, 0), showTex && showBase && mp.fuzz) {
+    const bx = bc.getContext("2d");
+    bx.save(), bx.globalCompositeOperation = "source-atop", bx.setTransform(D, 0, 0, D, 0, 0), bx.lineCap = "round";
+    const R2 = seeded(S.seed * 31 + 7), nF = Math.round(S.w * S.h * mp.fuzz), light = mp.lint ? "#e9ddd6" : rgbToHex(base.map((v) => Math.min(255, v + 60))), dark = rgbToHex(base.map((v) => v * 0.6));
+    for (let q = 0; q < nF; q++) {
+      const px = M + R2() * S.w, py = M + R2() * S.h, a = R2() * 6.283, L2 = mp.lint ? 1.6 + R2() * 3.4 : 0.8 + R2() * 2.4, bend = mp.lint ? 2.2 : 1;
+      bx.strokeStyle = mp.lint || R2() < 0.75 ? light : dark, bx.globalAlpha = mp.lint ? 0.28 + R2() * 0.3 : 0.1 + R2() * 0.18, bx.lineWidth = mp.lint ? 0.22 + R2() * 0.15 : 0.25 + R2() * 0.25, bx.beginPath(), bx.moveTo(px, py), bx.quadraticCurveTo(px + Math.cos(a) * L2 * 0.5 + (R2() - 0.5) * bend, py + Math.sin(a) * L2 * 0.5 + (R2() - 0.5) * bend, px + Math.cos(a) * L2, py + Math.sin(a) * L2), bx.stroke();
+    }
+    bx.restore();
+  }
+  return ox2.globalAlpha = 1, ox2.drawImage(bc, 0, 0), flatMarks && ox2.drawImage(flatMarks, 0, 0), out.margin = M, out;
+}
+const patchCache = /* @__PURE__ */ new Map(), renderQueue = [];
+let pumping = !1;
+function requestPatch(spec, key) {
+  if (patchCache.has(key)) {
+    const p2 = patchCache.get(key);
+    return patchCache.delete(key), patchCache.set(key, p2), p2;
+  }
+  const p = new Promise((res) => {
+    renderQueue.push({ spec, res }), pumping || (pumping = !0, setTimeout(pump, 0));
+  });
+  if (patchCache.set(key, p), patchCache.size > 140) {
+    const first = patchCache.keys().next().value;
+    patchCache.delete(first);
+  }
+  return p;
+}
+async function pump() {
+  const job = renderQueue.shift();
+  if (!job) {
+    pumping = !1;
+    return;
+  }
+  try {
+    job.res(await renderPatch(job.spec));
+  } catch (e) {
+    console.warn("patch render failed", e), job.res(null);
+  }
+  setTimeout(pump, 0);
+}
+const MATERIALS = {
+  linen: { label: "Linen", note: "Slub flax, open weave", map: "assets/linen-height.png", src: "Woven yarn model with slubs and flax flecks. The slub linen in your fourth reference image adds the large-scale unevenness" },
+  canvas: { label: "Canvas", note: "Tight, even weave", map: "assets/canvas-height.png", src: "Woven yarn model with a tight even weave. The beige swatch in your third reference image adds unevenness" },
+  denim: { label: "Denim", note: "3x1 twill, faded seams", map: "assets/denim-height.png", src: "Woven 3x1 twill with heathered indigo warp, white weft and fading along edges and seams" },
+  velvet: { label: "Velvet", note: "Crushed pile, soft sheen", map: "assets/velvet-height.png", src: "Pile model with a crushed nap and pale sheen where the cloth curves away from you" }
+}, STITCHES = {
+  running: { label: "Running", note: "Long plump dashes" },
+  double: { label: "Double", note: "Two staggered rows" },
+  blanket: { label: "Blanket", note: "Edge-wrapping bars" },
+  cord: { label: "Heavy cord", note: "Twisted couched cord" }
+}, CREAM_THREAD = "#efe4cc";
+function makeTheme(s, mode, pal, roles) {
+  const fab = pal.fabric, L = lum(fab), [h, sat, l] = hslOf(fab), tokens = {
+    fab,
+    thread: pal.thread,
+    accent: pal.accent,
+    ink: inkFor(fab),
+    inkSoft: mix(inkFor(fab), fab, 0.38),
+    fabHi: hsl(h, sat, Math.min(0.95, l + (L > 0.3 ? 0.045 : 0.07))),
+    fabLo: hsl(h, sat, l * (L > 0.3 ? 0.86 : 0.78)),
+    recess: hsl(h, sat * 0.9, l * (L > 0.3 ? 0.8 : 0.7)),
+    accentInk: inkFor(pal.accent)
+  };
+  return { mode, pal, tokens, roles: roles || null, material: s.material, stitch: s.stitch, iconStyle: s.iconStyle, iconShape: s.iconShape, depthK: 0.35 + s.depth / 100 * 1 };
+}
+const ThemeCtx = createContext(null);
+function roleTheme(t, role) {
+  const fab = t.roles && t.roles[role];
+  if (!fab || fab === t.tokens.fab) return t;
+  const [h, s, l] = hslOf(fab), L = lum(fab), ink = inkFor(fab);
+  return { ...t, tokens: { ...t.tokens, fab, ink, inkSoft: mix(ink, fab, 0.38), fabHi: hsl(h, s, Math.min(0.95, l + (L > 0.3 ? 0.045 : 0.07))), fabLo: hsl(h, s, l * (L > 0.3 ? 0.86 : 0.78)), recess: hsl(h, s * 0.9, l * (L > 0.3 ? 0.8 : 0.7)) } };
+}
+function withRole(role, C) {
+  return function(props) {
+    const t = useContext(ThemeCtx), rt = useMemo(() => roleTheme(t, role), [t]);
+    return /* @__PURE__ */ React.createElement(ThemeCtx.Provider, { value: rt }, /* @__PURE__ */ React.createElement(C, { ...props }));
+  };
+}
+function themeVars(t) {
+  const d = t.tokens;
+  return { "--fab": d.fab, "--fab-hi": d.fabHi, "--thread": d.thread, "--accent": d.accent, "--ink": d.ink, "--ink-soft": d.inkSoft, "--d": t.depthK.toFixed(2) };
+}
+function ThemeScope({ theme, children, className = "", style, as: Tag = "div", ...rest }) {
+  return /* @__PURE__ */ React.createElement(ThemeCtx.Provider, { value: theme }, /* @__PURE__ */ React.createElement(Tag, { className: "theme-scope " + className, "data-mode": theme.mode, style: { ...themeVars(theme), ...style }, ...rest }, children));
+}
+function threadFilter(id, o) {
+  return /* @__PURE__ */ React.createElement("filter", { id, key: id, x: "-12%", y: "-20%", width: "124%", height: "140%", colorInterpolationFilters: "sRGB" }, /* @__PURE__ */ React.createElement("feTurbulence", { type: "fractalNoise", baseFrequency: o.freq, numOctaves: "2", seed: "11", result: "n" }), /* @__PURE__ */ React.createElement("feColorMatrix", { in: "n", type: "matrix", values: "1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 0 1", result: "ng" }), /* @__PURE__ */ React.createElement("feComponentTransfer", { in: "ng", result: "streak" }, /* @__PURE__ */ React.createElement("feFuncR", { type: "linear", slope: o.streak, intercept: 1 - o.streak * 0.45 }), /* @__PURE__ */ React.createElement("feFuncG", { type: "linear", slope: o.streak, intercept: 1 - o.streak * 0.45 }), /* @__PURE__ */ React.createElement("feFuncB", { type: "linear", slope: o.streak, intercept: 1 - o.streak * 0.45 })), /* @__PURE__ */ React.createElement("feGaussianBlur", { in: "SourceAlpha", stdDeviation: o.blur, result: "b" }), /* @__PURE__ */ React.createElement("feDiffuseLighting", { in: "b", surfaceScale: o.surf, diffuseConstant: "1", lightingColor: "#ffffff", result: "lit" }, /* @__PURE__ */ React.createElement("feDistantLight", { azimuth: "225", elevation: "50" })), /* @__PURE__ */ React.createElement("feComposite", { in: "SourceGraphic", in2: "lit", operator: "arithmetic", k1: "1.3", result: "sh" }), /* @__PURE__ */ React.createElement("feComposite", { in: "sh", in2: "streak", operator: "arithmetic", k1: "1", result: "th" }), /* @__PURE__ */ React.createElement("feComposite", { in: "th", in2: "SourceAlpha", operator: "in", result: "body" }), /* @__PURE__ */ React.createElement("feGaussianBlur", { in: "SourceAlpha", stdDeviation: ".6", result: "sb" }), /* @__PURE__ */ React.createElement("feOffset", { in: "sb", dx: ".5", dy: ".9", result: "so" }), /* @__PURE__ */ React.createElement("feFlood", { floodColor: "#160e06", floodOpacity: ".45" }), /* @__PURE__ */ React.createElement("feComposite", { in2: "so", operator: "in", result: "shadow" }), /* @__PURE__ */ React.createElement("feMerge", null, /* @__PURE__ */ React.createElement("feMergeNode", { in: "shadow" }), /* @__PURE__ */ React.createElement("feMergeNode", { in: "body" })));
+}
+function FilterDefs({ k }) {
+  return /* @__PURE__ */ React.createElement("svg", { width: "0", height: "0", style: { position: "absolute", width: 0, height: 0 }, "aria-hidden": "true", focusable: "false" }, /* @__PURE__ */ React.createElement("defs", null, threadFilter("f-emb-text", { blur: 0.8, surf: (2.4 * k).toFixed(2), freq: "0.12 0.85", streak: 0.6 }), threadFilter("f-emb-sm", { blur: 0.5, surf: (1.4 * k).toFixed(2), freq: "0.14 0.9", streak: 0.45 })));
+}
+const rrLen = (w, h, r) => (r = Math.max(0, Math.min(r, w / 2, h / 2)), 2 * (w + h) - 8 * r + 2 * Math.PI * r);
+function rrPoint(x, y, w, h, r, s) {
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  const segs = [
+    ["L", x + r, y, x + w - r, y, 0, -1],
+    ["A", x + w - r, y + r, -90, 0],
+    ["L", x + w, y + r, x + w, y + h - r, 1, 0],
+    ["A", x + w - r, y + h - r, 0, 90],
+    ["L", x + w - r, y + h, x + r, y + h, 0, 1],
+    ["A", x + r, y + h - r, 90, 180],
+    ["L", x, y + h - r, x, y + r, -1, 0],
+    ["A", x + r, y + r, 180, 270]
+  ];
+  for (let i = 0; i < segs.length; i++) {
+    const g = segs[i], len = g[0] === "L" ? Math.hypot(g[3] - g[1], g[4] - g[2]) : Math.PI * r / 2;
+    if (s <= len || i === segs.length - 1) {
+      const t = len ? Math.min(1, s / len) : 0;
+      if (g[0] === "L") return [g[1] + (g[3] - g[1]) * t, g[2] + (g[4] - g[2]) * t, g[5], g[6]];
+      const a = (g[3] + (g[4] - g[3]) * t) * Math.PI / 180;
+      return [g[1] + r * Math.cos(a), g[2] + r * Math.sin(a), Math.cos(a), Math.sin(a)];
+    }
+    s -= len;
+  }
+  return [x, y, 0, -1];
+}
+function scallopPath(w, h, amp = 3.4, bump = 17) {
+  const x0 = amp, y0 = amp, ww = w - 2 * amp, hh = h - 2 * amp, r = Math.min(20, ww / 4), P = rrLen(ww, hh, r), nb = Math.max(8, Math.round(P / bump)), N = nb * 10, pts = [];
+  for (let i = 0; i < N; i++) {
+    const s = i / N * P, [px, py, nx, ny] = rrPoint(x0, y0, ww, hh, r, s), kk = Math.abs(Math.sin(Math.PI * s / P * nb)), o = amp * (Math.pow(kk, 0.55) * 2 - 1);
+    pts.push(`${(px + nx * o).toFixed(1)} ${(py + ny * o).toFixed(1)}`);
+  }
+  return "M" + pts.join("L") + "Z";
+}
+function useSize(ref, fixed) {
+  const [size, setSize] = useState(fixed || null);
+  return useLayoutEffect(() => {
+    if (fixed) {
+      setSize((s) => s && s.w === fixed.w && s.h === fixed.h ? s : fixed);
+      return;
+    }
+    const el = ref.current;
+    if (!el) return;
+    const upd = () => {
+      const w = el.offsetWidth, h = el.offsetHeight;
+      w && h && setSize((s) => s && s.w === w && s.h === h ? s : { w, h });
+    };
+    upd();
+    const ro = new ResizeObserver(upd);
+    return ro.observe(el), () => ro.disconnect();
+  }, [fixed && fixed.w, fixed && fixed.h]), size;
+}
+const FontsCtx = createContext(!1), measureCtx = mkCanvas(1, 1).getContext("2d");
+function textW(text, size, weight = 600) {
+  return measureCtx.font = `${weight} ${size}px ${THREAD_FONT}`, measureCtx.measureText(text).width;
+}
+const HEART_PATH = { d: "M24 40S7.5 30.2 7.5 18.4C7.5 12.5 11.9 8.6 16.8 8.6c3.3 0 5.8 1.9 7.2 4.3 1.4-2.4 3.9-4.3 7.2-4.3 4.9 0 9.3 3.9 9.3 9.8C40.5 30.2 24 40 24 40z", bx: 7.5, by: 8.6, bw: 33, bh: 31.4 };
+function Patch({ w, h, r = 18, shape = "rounded", pathSpec, fabric, dye, stitch, stitchInset = 6, stitchColor, stitchScale = 1, texScale = 1, layers, marks, fray = 0, seed, relief, satin, bare, className = "", style, children, as: Tag = "div", raised = !0, ...rest }) {
+  const t = useContext(ThemeCtx), ref = useRef(null), cvs = useRef(null), size = useSize(ref, w && h ? { w, h } : null), autoSeed = useMemo(() => Math.floor(Math.random() * 997), []), fab = fabric || t.tokens.fab, spec = size ? {
+    w: Math.round(size.w),
+    h: Math.round(size.h),
+    shape,
+    pathSpec: pathSpec || null,
+    r,
+    fab,
+    dye: dye || null,
+    material: t.material,
+    stitch: stitch === !1 ? "none" : stitch || t.stitch,
+    thread: stitchColor || t.tokens.thread,
+    inset: stitchInset,
+    sscale: stitchScale,
+    tex: texScale,
+    depth: +t.depthK.toFixed(2),
+    mode: t.mode,
+    raised,
+    fray,
+    marks: marks || null,
+    layers: layers || null,
+    seed: seed == null ? autoSeed : seed,
+    relief: relief || null,
+    satin: satin || null,
+    bare: !!bare,
+    dpr: DPR
+  } : null, key = spec ? JSON.stringify(spec) : "", [ready, setReady] = useState(!1), readyRef = useRef(!1);
+  useEffect(() => {
+    if (!spec) return;
+    let alive = !0;
+    const tm = setTimeout(() => {
+      requestPatch(spec, key).then((c) => {
+        if (!alive || !c || !cvs.current) return;
+        const el = cvs.current;
+        (el.width !== c.width || el.height !== c.height) && (el.width = c.width, el.height = c.height);
+        const x = el.getContext("2d");
+        x.clearRect(0, 0, el.width, el.height), x.drawImage(c, 0, 0), el.style.width = c.width / DPR + "px", el.style.height = c.height / DPR + "px", el.style.left = -c.margin + "px", el.style.top = -c.margin + "px", readyRef.current || (readyRef.current = !0, setReady(!0));
+      });
+    }, readyRef.current ? 40 : 0);
+    return () => {
+      alive = !1, clearTimeout(tm);
+    };
+  }, [key]);
+  const radius = shape === "circle" ? "50%" : shape === "pill" ? 9999 : shape === "scallop" ? 22 : r, cls = ["patch", "shape-" + shape, raised ? "raised" : "recess", bare ? "bare" : "", className].join(" ");
+  return /* @__PURE__ */ React.createElement(Tag, { ref, className: cls, "data-ready": ready ? "true" : "false", style: { width: w, height: h, borderRadius: radius, "--fab": fab, "--ink": inkFor(fab), "--ink-soft": mix(inkFor(fab), fab, 0.38), ...style }, ...rest }, /* @__PURE__ */ React.createElement("canvas", { ref: cvs, className: "p-canvas", "aria-hidden": "true" }), /* @__PURE__ */ React.createElement("div", { className: "p-content" }, children));
+}
+function Stitched({ marks, w, h, relief, className, style }) {
+  return /* @__PURE__ */ React.createElement(Patch, { w, h, bare: !0, raised: !1, stitch: !1, marks, relief, className: "stitched " + (className || ""), style });
+}
+function Emb({ children, size, weight = 600, color, small, className = "", style, as: Tag = "span" }) {
+  return /* @__PURE__ */ React.createElement(Tag, { className: "emb " + (small ? "emb-sm " : "") + className, style: { fontSize: size, fontWeight: weight, color, ...style } }, children);
+}
+function SatinText({ text, size, weight = 600, color, ls = 0, relief, style, className }) {
+  const fonts = useContext(FontsCtx), t = useContext(ThemeCtx), c = color || t.tokens.ink, w = Math.ceil(textW(text, size, weight) + ls * text.length + 6), h = Math.ceil(size * 1.22);
+  return /* @__PURE__ */ React.createElement(Stitched, { w, h, relief: relief || clamp(size * 0.06, 1, 3), className, style, marks: [{ k: "text", text, x: 3, y: Math.round(size * 0.93), size, weight, color: c, ls, f: fonts ? 1 : 0 }] });
+}
+const CALL = "M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z";
+function gearPath(cx, cy, ro, ri, teeth, hole) {
+  let d = "";
+  const n = teeth * 4;
+  for (let i = 0; i < n; i++) {
+    const a = i / n * Math.PI * 2 - Math.PI / 2, rr = i % 4 < 2 ? ro : ri, a2 = a + (i % 4 === 0 || i % 4 === 2 ? 0.06 : -0.06);
+    d += (i ? "L" : "M") + (cx + rr * Math.cos(a2)).toFixed(2) + " " + (cy + rr * Math.sin(a2)).toFixed(2);
+  }
+  return d + `ZM${cx + hole} ${cy}A${hole} ${hole} 0 1 0 ${cx - hole} ${cy}A${hole} ${hole} 0 1 0 ${cx + hole} ${cy}Z`;
+}
+const GLYPHS = {
+  wifi: (c) => `<g stroke="${c}" stroke-width="5.2" stroke-linecap="round" fill="none"><path d="M7 19c9.6-8.6 24.4-8.6 34 0"/><path d="M13.6 26.4c5.9-5 14.9-5 20.8 0"/></g><circle cx="24" cy="34.6" r="4.4" fill="${c}"/>`,
+  bluetooth: (c) => `<path d="M15 16.5l17.5 15-8.5 8V8.5l8.5 8L15 31.5" stroke="${c}" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+  bell: (c) => `<g stroke="${c}" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14 33V22.5a10 10 0 0 1 20 0V33l3 3.2H11z"/><path d="M20.6 40.4a3.6 3.6 0 0 0 6.8 0"/></g>`,
+  phone: (c) => `<path d="${CALL}" transform="translate(5.6 5.6) scale(1.6)" fill="${c}"/>`,
+  mail: (c) => `<g stroke="${c}" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="8" y="13" width="32" height="23" rx="3.5"/><path d="M9.5 15.5L24 26.5l14.5-11"/></g>`,
+  mic: (c) => `<rect x="18.5" y="7" width="11" height="20" rx="5.5" fill="${c}"/><path d="M12.5 22.5a11.5 11.5 0 0 0 23 0M24 34.5v6.5" stroke="${c}" stroke-width="4" stroke-linecap="round" fill="none"/>`,
+  play: (c) => `<path d="M17 11l21 13-21 13z" fill="${c}" stroke="${c}" stroke-width="3" stroke-linejoin="round"/>`,
+  pause: (c) => `<rect x="13.5" y="10.5" width="8" height="27" rx="2.5" fill="${c}"/><rect x="26.5" y="10.5" width="8" height="27" rx="2.5" fill="${c}"/>`,
+  prev: (c) => `<path d="M35 12.5L18 24l17 11.5z" fill="${c}" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"/><rect x="12" y="12.5" width="4.4" height="23" rx="1.8" fill="${c}"/>`,
+  next: (c) => `<path d="M13 12.5L30 24 13 35.5z" fill="${c}" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"/><rect x="31.6" y="12.5" width="4.4" height="23" rx="1.8" fill="${c}"/>`,
+  check: (c) => `<path d="M11 25l8.5 8.5L37.5 15" stroke="${c}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+  moon: (c) => `<path d="M30.5 8.5A16 16 0 1 0 39.5 32 13 13 0 0 1 30.5 8.5z" fill="${c}"/>`,
+  star: (c) => `<path d="M24 7l5 10.6 11.6 1.4-8.6 8 2.3 11.5L24 32.8 13.7 38.5 16 27l-8.6-8 11.6-1.4z" fill="${c}" stroke="${c}" stroke-width="1.6" stroke-linejoin="round"/>`,
+  drop: (c) => `<path d="M24 6.5c6 9 12.5 15.4 12.5 22.6a12.5 12.5 0 0 1-25 0C11.5 21.9 18 15.5 24 6.5z" fill="${c}"/>`,
+  heart: (c) => `<path d="M24 40S7.5 30.2 7.5 18.4C7.5 12.5 11.9 8.6 16.8 8.6c3.3 0 5.8 1.9 7.2 4.3 1.4-2.4 3.9-4.3 7.2-4.3 4.9 0 9.3 3.9 9.3 9.8C40.5 30.2 24 40 24 40z" fill="${c}"/>`,
+  close: (c) => `<path d="M14 14l20 20M34 14L14 34" stroke="${c}" stroke-width="5" stroke-linecap="round"/>`,
+  sunDisc: () => '<circle cx="24" cy="24" r="20" fill="#c99a34"/>',
+  sunR: () => {
+    let r = "";
+    for (let k = 0; k < 8; k++) {
+      const a = k * Math.PI / 4;
+      r += `<path d="M${(24 + 13.5 * Math.cos(a)).toFixed(1)} ${(24 + 13.5 * Math.sin(a)).toFixed(1)}L${(24 + 19.5 * Math.cos(a)).toFixed(1)} ${(24 + 19.5 * Math.sin(a)).toFixed(1)}"/>`;
+    }
+    return `<g stroke="#e2a12c" stroke-width="4" stroke-linecap="round">${r}</g><circle cx="24" cy="24" r="10" fill="#f2b632"/>`;
+  },
+  cloud: () => '<path d="M13 37h22a8.5 8.5 0 0 0 1.4-16.9A11.5 11.5 0 0 0 14.2 18.6 9.2 9.2 0 0 0 13 37z" fill="#e4edf6" stroke="#86acd3" stroke-width="2.8"/>',
+  rain: () => '<path d="M13 30h22a8.5 8.5 0 0 0 1.4-16.9A11.5 11.5 0 0 0 14.2 11.6 9.2 9.2 0 0 0 13 30z" fill="#dbe6f2" stroke="#7fa3cc" stroke-width="2.8"/><g stroke="#3f7cc4" stroke-width="3.4" stroke-linecap="round"><path d="M17.5 35l-2 5.5"/><path d="M25.5 35l-2 5.5"/><path d="M33.5 35l-2 5.5"/></g>',
+  partly: () => '<circle cx="18" cy="17" r="9.5" fill="#f2b632"/><path d="M16 39h20a8 8 0 0 0 1.3-15.9A10.8 10.8 0 0 0 16.6 21.4 8.8 8.8 0 0 0 16 39z" fill="#e4edf6" stroke="#86acd3" stroke-width="2.8"/>',
+  dropOutline: (c) => `<path d="M24 8c6 9 11.5 15 11.5 21.6a11.5 11.5 0 0 1-23 0C12.5 23 18 17 24 8z" fill="none" stroke="${c}" stroke-width="3" stroke-dasharray="4 3"/>`,
+  googleG: () => '<g fill="none" stroke-width="7"><path d="M38.5 16.5A16 16 0 0 0 10.4 15" stroke="#ea4335"/><path d="M10.4 15a16 16 0 0 0 0 18" stroke="#fbbc05"/><path d="M10.4 33a16 16 0 0 0 26.8 2" stroke="#34a853"/><path d="M37.2 35A16 16 0 0 0 40 24H25" stroke="#4285f4"/></g>',
+  leaf: () => {
+    const leaf = (x, y, a, s, c) => `<g transform="translate(${x} ${y}) rotate(${a}) scale(${s})"><path d="M0 0C6-7.5 18-8.5 26 0 18 8.5 6 7.5 0 0z" fill="${c}"/></g>`;
+    return '<path d="M8 44C16 34 24 24 40 8" stroke="#55702e" stroke-width="2.6" fill="none" stroke-linecap="round"/>' + leaf(14, 36, -120, 0.64, "#5d8a3a") + leaf(16, 33, -20, 0.62, "#4b7a30") + leaf(23, 27, -125, 0.64, "#6a9a44") + leaf(26, 23, -15, 0.6, "#5d8a3a") + leaf(33, 16, -115, 0.56, "#4b7a30") + leaf(35, 13, -30, 0.52, "#6a9a44");
+  },
+  album: () => '<rect x="2" y="2" width="44" height="26" fill="#e9a35a"/><circle cx="24" cy="27" r="9" fill="#f6d36b"/><path d="M2 27h44v6H2z" fill="#3e78a8"/><path d="M2 33h44v6H2z" fill="#2e6390"/><path d="M2 39h44v7H2z" fill="#3f8a5a"/>'
+};
+function glyphMark(name, color, x, y, size) {
+  return { k: "svg", svg: GLYPHS[name](color), x, y, size };
+}
+function Glyph({ name, size = 28, color = "#333", className = "", style, relief }) {
+  return GLYPHS[name] ? /* @__PURE__ */ React.createElement(Stitched, { w: size, h: size, relief: relief || clamp(size * 0.05, 0.9, 2.4), className: "glyph " + className, style, marks: [glyphMark(name, color, 0, 0, size)] }) : null;
+}
+function FabricSwitch({ on, onChange, w = 56, h = 28, label, id }) {
+  const t = useContext(ThemeCtx), trackFab = on ? mix(t.tokens.fab, t.tokens.accent, 0.55) : t.tokens.recess, txt2 = on ? "on" : "off", ts = Math.round(h * 0.44), tw = textW(txt2, ts, 700), tx = on ? 9 : w - 8 - tw;
+  return /* @__PURE__ */ React.createElement("button", { id, type: "button", role: "switch", "aria-checked": on, "aria-label": label, className: "fswitch" + (on ? " on" : ""), style: { width: w, height: h, "--sw": w - h + "px" }, onClick: () => onChange(!on) }, /* @__PURE__ */ React.createElement(Patch, { w, h, shape: "pill", raised: !1, fabric: trackFab, stitch: !1, relief: 1, marks: [{ k: "text", text: txt2, x: tx, y: h / 2 + ts * 0.36, size: ts, weight: 700, color: inkFor(trackFab) }] }), /* @__PURE__ */ React.createElement("span", { className: "fswitch-knob", style: { width: h - 6, height: h - 6 } }, /* @__PURE__ */ React.createElement(Patch, { w: h - 6, h: h - 6, shape: "circle", stitchInset: 3.2, stitchScale: 0.62, fabric: t.tokens.fabHi, seed: 5 })));
+}
+function FabricSlider({ value, onChange, min = 0, max = 100, label, id, width = 220 }) {
+  const t = useContext(ThemeCtx), ref = useRef(null), pct = (value - min) / (max - min), setFrom = (e) => {
+    const r = ref.current.getBoundingClientRect(), p = clamp((e.clientX - r.left - 12 * r.width / width) / (r.width - 24 * r.width / width));
+    onChange(Math.round(min + p * (max - min)));
+  }, onKey = (e) => {
+    const step = e.shiftKey ? 10 : 2;
+    (e.key === "ArrowRight" || e.key === "ArrowUp") && (onChange(Math.min(max, value + step)), e.preventDefault()), (e.key === "ArrowLeft" || e.key === "ArrowDown") && (onChange(Math.max(min, value - step)), e.preventDefault()), e.key === "Home" && onChange(min), e.key === "End" && onChange(max);
+  }, fillW = Math.max(10, Math.round(12 + (width - 24) * pct));
+  return /* @__PURE__ */ React.createElement(
+    "div",
+    {
+      ref,
+      id,
+      className: "fslider",
+      style: { width },
+      role: "slider",
+      tabIndex: 0,
+      "aria-label": label,
+      "aria-valuemin": min,
+      "aria-valuemax": max,
+      "aria-valuenow": value,
+      onKeyDown: onKey,
+      onPointerDown: (e) => {
+        e.currentTarget.setPointerCapture(e.pointerId), setFrom(e);
+      },
+      onPointerMove: (e) => {
+        e.buttons && setFrom(e);
+      }
+    },
+    /* @__PURE__ */ React.createElement(Patch, { w: width, h: 14, shape: "pill", raised: !1, stitch: !1, fabric: t.tokens.recess, seed: 3 }),
+    /* @__PURE__ */ React.createElement("span", { className: "fslider-fill" }, /* @__PURE__ */ React.createElement(Patch, { w: fillW, h: 8, shape: "pill", stitch: !1, fabric: t.tokens.accent, seed: 4 })),
+    /* @__PURE__ */ React.createElement("span", { className: "fslider-knob", style: { left: 12 + (width - 24) * pct } }, /* @__PURE__ */ React.createElement(Patch, { w: 24, h: 24, shape: "circle", stitchInset: 3.2, stitchScale: 0.62, fabric: t.tokens.fabHi, seed: 6 }))
+  );
+}
+function FabricCheck({ checked, onChange, label, id }) {
+  const t = useContext(ThemeCtx);
+  return /* @__PURE__ */ React.createElement("label", { className: "fcheck", htmlFor: id }, /* @__PURE__ */ React.createElement("input", { id, type: "checkbox", checked, onChange: (e) => onChange(e.target.checked), className: "sr-only" }), /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w: 24,
+      h: 24,
+      r: 7,
+      stitchInset: 3.2,
+      stitchScale: 0.6,
+      fabric: checked ? t.tokens.accent : t.tokens.fabHi,
+      stitchColor: checked ? CREAM_THREAD : void 0,
+      seed: 8,
+      marks: checked ? [glyphMark("check", CREAM_THREAD, 3, 3, 18)] : null,
+      relief: 1.2
+    }
+  ), /* @__PURE__ */ React.createElement("span", { className: "fcheck-label" }, label));
+}
+function FabricRadio({ checked, onChange, label, name, id }) {
+  const t = useContext(ThemeCtx);
+  return /* @__PURE__ */ React.createElement("label", { className: "fcheck", htmlFor: id }, /* @__PURE__ */ React.createElement("input", { id, type: "radio", name, checked, onChange: () => onChange(), className: "sr-only" }), /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w: 24,
+      h: 24,
+      shape: "circle",
+      stitchInset: 3.2,
+      stitchScale: 0.55,
+      fabric: t.tokens.fabHi,
+      seed: 9,
+      marks: checked ? [{ k: "svg", svg: `<circle cx="24" cy="24" r="10" fill="${t.tokens.accent}"/>`, x: 0, y: 0, size: 24 }] : null,
+      relief: 1.6
+    }
+  ), /* @__PURE__ */ React.createElement("span", { className: "fcheck-label" }, label));
+}
+function FabricButton({ children, onClick, h = 40, fabric, tone, id, label }) {
+  const t = useContext(ThemeCtx), fab = fabric || (tone === "accent" ? t.tokens.accent : t.tokens.fabHi), text = String(children), ts = 14, w = Math.ceil(textW(text, ts, 600) + 44);
+  return /* @__PURE__ */ React.createElement("button", { id, type: "button", className: "fbutton", onClick, "aria-label": label }, /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w,
+      h,
+      shape: "pill",
+      stitchInset: 4.5,
+      stitchScale: 0.8,
+      fabric: fab,
+      stitchColor: tone === "accent" ? CREAM_THREAD : void 0,
+      relief: 1.3,
+      marks: [{ k: "text", text, x: w / 2, y: h / 2 + ts * 0.36, size: ts, weight: 600, align: "center", color: inkFor(fab) }]
+    }
+  ));
+}
+function sector(cx, cy, r, a0, a1) {
+  const p = (a) => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)], [x0, y0] = p(a0), [x1, y1] = p(a1);
+  return `M${cx} ${cy}L${x0.toFixed(2)} ${y0.toFixed(2)}A${r} ${r} 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)}Z`;
+}
+const PIN = "M24 4.5C16.6 4.5 10.6 10.3 10.6 17.6 10.6 27.4 24 43.5 24 43.5s13.4-16.1 13.4-25.9C37.4 10.3 31.4 4.5 24 4.5z", APPS = [
+  { id: "phone", name: "Phone", brand: "#1f6fd6", draw: (c) => `<path d="${CALL}" transform="translate(4.4 4.4) scale(1.7)" fill="${c.p}"/>` },
+  { id: "messages", name: "Messages", brand: "#2f6fe0", s: CREAM_THREAD, dyedS: "#2f6fe0", draw: (c) => `<path d="M38.5 7.5h-29c-2 0-3.5 1.6-3.5 3.5V42l7-7h25.5c2 0 3.5-1.6 3.5-3.5V11c0-1.9-1.5-3.5-3.5-3.5z" fill="${c.p}"/><path d="M14 18h20M14 25.5h13" stroke="${c.s}" stroke-width="4.2" stroke-linecap="round"/>` },
+  { id: "whatsapp", name: "WhatsApp", brand: "#2aa952", draw: (c) => `<path d="M24 6.5a17.5 17.5 0 0 0-15 26.4L6.5 41.5l8.9-2.3A17.5 17.5 0 1 0 24 6.5z" fill="none" stroke="${c.p}" stroke-width="4.6" stroke-linejoin="round"/><path d="${CALL}" transform="translate(13.2 13.2) scale(.9)" fill="${c.p}"/>` },
+  {
+    id: "instagram",
+    name: "Instagram",
+    brand: "#d62976",
+    dye: { angle: 45, stops: [[0, "#f6b149"], [0.3, "#ef6a3a"], [0.62, "#d62976"], [1, "#8a3ab9"]] },
+    gradient: !0,
+    draw: (c) => `<defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#f6b149"/><stop offset=".35" stop-color="#ef6a3a"/><stop offset=".65" stop-color="#d62976"/><stop offset="1" stop-color="#8a3ab9"/></linearGradient></defs><g stroke="${c.gradient ? "url(#ig)" : c.p}" stroke-width="4.8" fill="none"><rect x="8.5" y="8.5" width="31" height="31" rx="9.5"/><circle cx="24" cy="24" r="7.4"/></g><circle cx="33" cy="15" r="2.8" fill="${c.gradient ? "#c13584" : c.p}"/>`
+  },
+  { id: "youtube", name: "YouTube", brand: "#d92a1e", s: CREAM_THREAD, draw: (c) => `<rect x="4.5" y="11" width="39" height="26" rx="8" fill="${c.p}"/><path d="M20 17.6l11.4 6.4L20 30.4z" fill="${c.s}" stroke="${c.s}" stroke-width="1.6" stroke-linejoin="round"/>` },
+  { id: "camera", name: "Camera", brand: "#454a51", s: "#4a86e8", dyedS: "#9cc0ff", draw: (c) => `<path d="M16.5 14.5l2.8-5h9.4l2.8 5" fill="none" stroke="${c.p}" stroke-width="4" stroke-linejoin="round"/><rect x="5.5" y="14.5" width="37" height="25" rx="5.5" fill="none" stroke="${c.p}" stroke-width="4.4"/><circle cx="24" cy="27" r="7.4" fill="none" stroke="${c.p}" stroke-width="4"/><circle cx="24" cy="27" r="2.8" fill="${c.s}"/>` },
+  { id: "maps", name: "Maps", brand: "#34a853", multi: !0, dyeFab: "#ece6d8", draw: (c) => `<defs><clipPath id="pin"><path d="${PIN}"/></clipPath></defs><g clip-path="url(#pin)"><rect x="0" y="0" width="24" height="20" fill="#4285f4"/><rect x="24" y="0" width="24" height="20" fill="#ea4335"/><path d="M0 20H48L0 40z" fill="#fbbc04"/><path d="M48 20V48H0V40z" fill="#34a853"/></g><circle cx="24" cy="17.6" r="5.2" fill="${c.k}"/>` },
+  { id: "spotify", name: "Spotify", brand: "#1db954", s: "#141414", dyedS: "#141414", draw: (c) => `${c.dyed ? "" : `<circle cx="24" cy="24" r="18" fill="${c.p}"/>`}<g stroke="${c.s}" stroke-linecap="round" fill="none"><path d="M13.6 19.2c6.8-2.3 14.2-1.7 20.4 1.8" stroke-width="4.4"/><path d="M15.2 25.6c5.5-1.7 11.4-1.2 16.4 1.5" stroke-width="3.9"/><path d="M16.8 31.6c4.3-1.1 8.8-.8 12.7 1" stroke-width="3.4"/></g>` },
+  { id: "calendar", name: "Calendar", brand: "#3b78e7", s: CREAM_THREAD, draw: (c) => `<rect x="8.5" y="8.5" width="31" height="32" rx="5.5" fill="none" stroke="${c.p}" stroke-width="4"/><path d="M10.5 10.5h27v7.5h-27z" fill="${c.p}"/>`, text: (c) => ({ text: String((/* @__PURE__ */ new Date()).getDate()), x: 24, y: 35.5, size: 15, weight: 700, color: c.p }) },
+  { id: "chrome", name: "Chrome", brand: "#4285f4", multi: !0, dyeFab: "#ece6d8", draw: (c) => `<path d="${sector(24, 24, 18, 210, 330)}" fill="#e34133"/><path d="${sector(24, 24, 18, 90, 210)}" fill="#2f9e4f"/><path d="${sector(24, 24, 18, 330, 450)}" fill="#f6bd16"/><circle cx="24" cy="24" r="9" fill="${c.k}"/><circle cx="24" cy="24" r="6.3" fill="#3b78e7"/>` },
+  { id: "settings", name: "Settings", brand: "#5f6368", draw: (c) => `<path d="${gearPath(24, 24, 17, 12.6, 8, 5.6)}" fill="${c.p}" fill-rule="evenodd"/>` },
+  { id: "game", name: "Pixel Quest", brand: "#7a4fd3", s: CREAM_THREAD, draw: (c) => `<path d="M15 14.5h18c5.4 0 8.7 4.7 9.2 10.6l.8 7.5c.3 3.1-2 5.5-4.9 4.7-2-.6-3.6-2.6-5.1-4.5H15c-1.5 1.9-3.1 3.9-5.1 4.5-2.9.8-5.2-1.6-4.9-4.7l.8-7.5C6.3 19.2 9.6 14.5 15 14.5z" fill="${c.p}"/><path d="M15.5 20v8M11.5 24h8" stroke="${c.s}" stroke-width="3.4" stroke-linecap="round"/><circle cx="31" cy="21.6" r="2.4" fill="${c.s}"/><circle cx="35.4" cy="26" r="2.4" fill="${c.s}"/>` },
+  { id: "studio", name: "Theme Studio", brand: "#a9552d", s: "#e6c48f", draw: (c) => `<rect x="14" y="7" width="20" height="6" rx="2.4" fill="${c.p}"/><rect x="14" y="35" width="20" height="6" rx="2.4" fill="${c.p}"/><rect x="17" y="13" width="14" height="22" fill="${c.s}"/><path d="M31 25c5 1 8 4 9.5 9" stroke="${c.s}" stroke-width="2.6" fill="none" stroke-linecap="round"/>` }
+], APP_BY_ID = Object.fromEntries(APPS.map((a) => [a.id, a]));
+function unknownApp(name, id = "unknown") {
+  const clean = (name || "").trim() || "New App", words = clean.split(/\s+/).filter(Boolean), initials = (words.length > 1 ? words[0][0] + words[1][0] : clean.slice(0, 2)).toUpperCase(), hue = hashStr(clean.toLowerCase()) % 360;
+  return {
+    id,
+    name: clean,
+    unknown: !0,
+    brand: hsl(hue, 0.45, 0.42),
+    initials,
+    draw: (c) => `<circle cx="24" cy="24" r="18" fill="none" stroke="${c.p}" stroke-width="2.6" stroke-dasharray="3.6 2.8"/>`,
+    text: (c) => ({ text: initials, x: 24, y: 31.2, size: initials.length > 1 ? 17 : 21, weight: 700, color: c.p })
+  };
+}
+function imageApp(name, src) {
+  return { id: "custom-logo", name: name || "Your logo", brand: "#6b6b6b", image: src, multi: !0, dyeFab: "#ece6d8" };
+}
+function iconColors(app, t) {
+  const tk = t.tokens, style = t.iconStyle;
+  if (style === "dyed") {
+    const fab2 = app.multi ? app.dyeFab || tk.fabHi : app.brand, onFab = contrast(fab2, CREAM_THREAD) > 1.9 ? CREAM_THREAD : "#2a221a", stitch = app.multi ? tk.thread : contrast(CREAM_THREAD, fab2) > 1.9 ? CREAM_THREAD : tk.thread;
+    return { fab: fab2, dye: app.gradient ? app.dye : null, p: onFab, s: app.dyedS || (app.s ? fab2 : onFab), k: CREAM_THREAD, dyed: !0, gradient: !1, stitch };
+  }
+  if (style === "accent") {
+    const fab2 = tk.accent, th = contrast(tk.thread, fab2) > 1.8 ? tk.thread : contrast(CREAM_THREAD, fab2) > 1.8 ? CREAM_THREAD : inkFor(fab2);
+    return { fab: fab2, p: th, s: app.s ? fab2 : th, k: CREAM_THREAD, gradient: !1, stitch: th };
+  }
+  const fab = tk.fab, p = contrast(app.brand, fab) > 1.5 ? app.brand : mix(app.brand, tk.ink, 0.45);
+  return { fab, p, s: app.s || p, k: lum(fab) > 0.6 ? "#fbf8f1" : CREAM_THREAD, gradient: !!app.gradient, stitch: tk.thread };
+}
+function iconMarks(app, c, size) {
+  const ls = size * 0.64 * (app.scale || 1), o = (size - ls) / 2, u = ls / 48, marks = [];
+  if (app.image ? marks.push({ k: "img", src: app.image, x: o, y: o, w: ls, h: ls }) : marks.push({ k: "svg", svg: app.draw(c), x: o, y: o, size: ls }), app.text) {
+    const tx = app.text(c);
+    marks.push({ k: "text", text: tx.text, x: o + tx.x * u, y: o + tx.y * u, size: tx.size * u, weight: tx.weight, color: tx.color, align: "center" });
+  }
+  return marks;
+}
+function FabricIcon({ app, size = 56, label = !0, onClick, layers, labelColor, id }) {
+  const t = useContext(ThemeCtx);
+  let c = iconColors(app, t);
+  app.unknown && t.iconStyle === "themed" && (c = { ...c, p: contrast(app.brand, c.fab) > 1.5 ? app.brand : mix(app.brand, t.tokens.ink, 0.5) }), app.unknown && t.iconStyle === "dyed" && (c = { ...c, fab: app.brand, p: CREAM_THREAD, stitch: CREAM_THREAD });
+  const z = size / 56, shape = t.iconShape === "circle" ? "circle" : "rounded";
+  return /* @__PURE__ */ React.createElement("button", { id, type: "button", className: "app", onClick, "aria-label": app.name, style: { width: label ? Math.max(size + 14, 66) : size } }, /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w: size,
+      h: size,
+      r: size * 0.26,
+      shape,
+      fabric: c.fab,
+      dye: c.dye,
+      stitchInset: size * 0.1,
+      stitchScale: z * 0.92,
+      stitchColor: c.stitch,
+      texScale: z,
+      layers,
+      fray: 0.85,
+      seed: hashStr(app.id) % 997,
+      relief: 1.5 * z,
+      satin: 1.05 * z,
+      marks: iconMarks(app, c, size)
+    }
+  ), label && /* @__PURE__ */ React.createElement("span", { className: "app-label", style: labelColor ? { color: labelColor, textShadow: "none" } : null }, app.name));
+}
+function prepareLogo(file, removeBg) {
+  return new Promise((resolve, reject) => {
+    if (!file || !/^image\//.test(file.type)) return reject(new Error("That file is not an image. Choose a PNG, SVG, JPG or WebP logo."));
+    if (file.size > 8e6) return reject(new Error("That logo is larger than 8 MB. Choose a smaller file."));
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      try {
+        const c = mkCanvas(256, 256), x = c.getContext("2d", { willReadFrequently: !0 }), sc = Math.min(256 / img.naturalWidth, 256 / img.naturalHeight) || 1, w = img.naturalWidth * sc, h = img.naturalHeight * sc;
+        if (x.drawImage(img, (256 - w) / 2, (256 - h) / 2, w, h), removeBg) {
+          const d = x.getImageData(0, 0, 256, 256), p = d.data, opaque = [0, 255 * 4, 256 * 255 * 4, (256 * 256 - 1) * 4].map((i) => [p[i], p[i + 1], p[i + 2], p[i + 3]]).filter((q) => q[3] > 240);
+          if (opaque.length >= 3) {
+            const bg = [0, 1, 2].map((k) => opaque.reduce((a, q) => a + q[k], 0) / opaque.length);
+            for (let i = 0; i < p.length; i += 4) {
+              const dd = Math.hypot(p[i] - bg[0], p[i + 1] - bg[1], p[i + 2] - bg[2]);
+              dd < 40 && (p[i + 3] = Math.round(p[i + 3] * clamp((dd - 18) / 22)));
+            }
+            x.putImageData(d, 0, 0);
+          }
+        }
+        URL.revokeObjectURL(url), resolve(c.toDataURL("image/png"));
+      } catch {
+        URL.revokeObjectURL(url), reject(new Error("This logo could not be processed in the browser."));
+      }
+    }, img.onerror = () => {
+      URL.revokeObjectURL(url), reject(new Error("This browser could not open that file. Try a PNG or SVG."));
+    }, img.src = url;
+  });
+}
+function useNow(ms = 15e3) {
+  const [now, setNow] = useState(() => /* @__PURE__ */ new Date());
+  return useEffect(() => {
+    const i = setInterval(() => setNow(/* @__PURE__ */ new Date()), ms);
+    return () => clearInterval(i);
+  }, [ms]), now;
+}
+function useBattery() {
+  const [b, setB] = useState({ level: 1, charging: !1, live: !1 });
+  return useEffect(() => {
+    let bat, upd, alive = !0;
+    try {
+      navigator.getBattery && navigator.getBattery().then((x) => {
+        alive && (bat = x, upd = () => setB({ level: x.level, charging: x.charging, live: !0 }), upd(), x.addEventListener("levelchange", upd), x.addEventListener("chargingchange", upd));
+      }).catch(() => {
+      });
+    } catch {
+    }
+    return () => {
+      alive = !1, bat && upd && (bat.removeEventListener("levelchange", upd), bat.removeEventListener("chargingchange", upd));
+    };
+  }, []), b;
+}
+const fmtTime = (d) => {
+  let h = d.getHours();
+  const ap = h >= 12 ? "PM" : "AM";
+  return h = h % 12 || 12, { hm: String(h).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"), ap };
+}, DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], txt = (text, x, y, size, color, extra) => ({ k: "text", text, x, y, size, weight: 600, color, ...extra });
+function StatusBar({ now, sys, love, battery }) {
+  const { hm } = fmtTime(now);
+  return /* @__PURE__ */ React.createElement("div", { className: "statusbar" }, /* @__PURE__ */ React.createElement("span", { className: "sb-time" }, hm), /* @__PURE__ */ React.createElement("span", { className: "sb-right" }, love && /* @__PURE__ */ React.createElement("svg", { width: "13", height: "13", viewBox: "0 0 48 48", "aria-label": "Love Mode on" }, /* @__PURE__ */ React.createElement("path", { d: "M24 41S6 30.5 6 18C6 11.6 10.8 7.5 16 7.5c3.6 0 6.4 2 8 4.7 1.6-2.7 4.4-4.7 8-4.7 5.2 0 10 4.1 10 10.5C42 30.5 24 41 24 41z", fill: "currentColor" })), sys.bt && /* @__PURE__ */ React.createElement("svg", { width: "12", height: "14", viewBox: "0 0 48 48", "aria-label": "Bluetooth on" }, /* @__PURE__ */ React.createElement("path", { d: "M14 16l18 16-8 8V8l8 8-18 16", stroke: "currentColor", strokeWidth: "4.5", fill: "none", strokeLinecap: "round", strokeLinejoin: "round" })), /* @__PURE__ */ React.createElement("svg", { width: "15", height: "13", viewBox: "0 0 48 40", "aria-label": sys.wifi ? "Wi-Fi on" : "Wi-Fi off", style: { opacity: sys.wifi ? 1 : 0.35 } }, /* @__PURE__ */ React.createElement("path", { d: "M24 38L2 12C14-1 34-1 46 12z", fill: "currentColor" })), /* @__PURE__ */ React.createElement("span", { className: "sb-bat", "aria-label": "Battery " + Math.round(battery.level * 100) + "%" }, /* @__PURE__ */ React.createElement("span", { style: { width: Math.round(battery.level * 100) + "%" } })), /* @__PURE__ */ React.createElement("span", { className: "sb-pct" }, Math.round(battery.level * 100), "%")));
+}
+function BatteryBar({ level, w = 52, h = 14 }) {
+  const t = useContext(ThemeCtx), fw = Math.max(8, Math.round((w - 6) * level));
+  return /* @__PURE__ */ React.createElement("span", { className: "batbar", style: { width: w + 5, height: h } }, /* @__PURE__ */ React.createElement(Patch, { w, h, shape: "pill", raised: !1, stitch: !1, fabric: t.tokens.recess, seed: 21 }, /* @__PURE__ */ React.createElement("span", { className: "batbar-fill" }, /* @__PURE__ */ React.createElement(Patch, { w: fw, h: h - 6, shape: "pill", stitch: !1, fabric: t.tokens.accent, seed: 22 }))), /* @__PURE__ */ React.createElement("span", { className: "batbar-cap", style: { background: t.tokens.recess } }));
+}
+function WeatherWidget({ now, battery, onTap }) {
+  const t = useContext(ThemeCtx), ink = t.tokens.ink, { hm, ap } = fmtTime(now), pct = Math.round(battery.level * 100) + "%", pillInk = inkFor(t.tokens.fabHi);
+  return /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w: 336,
+      h: 138,
+      r: 24,
+      stitchInset: 7.5,
+      className: "widget",
+      role: "group",
+      "aria-label": "Weather, sample data",
+      seed: 31,
+      relief: 2.4,
+      satin: 1.1,
+      marks: [txt("31\xB0", 14, 60, 52, ink), txt("Very unhealthy", 166, 33, 13, ink, { weight: 700 }), txt("Few Clouds", 166, 52, 13, ink, { weight: 700 }), { k: "svg", svg: GLYPHS.sunDisc(), x: 266, y: 9, size: 54 }, { k: "svg", svg: GLYPHS.leaf(), x: 282, y: 28, size: 52 }]
+    },
+    /* @__PURE__ */ React.createElement("div", { className: "abs", onClick: onTap }, /* @__PURE__ */ React.createElement("img", { src: "assets/partly-cloudy.png", className: "cutout wx-cloud", alt: "", draggable: "false" }), /* @__PURE__ */ React.createElement(
+      Patch,
+      {
+        w: 308,
+        h: 40,
+        shape: "pill",
+        stitchInset: 5,
+        stitchScale: 0.85,
+        fabric: t.tokens.fabHi,
+        className: "wx-pill",
+        seed: 32,
+        relief: 1.6,
+        marks: [txt(hm + ap, 17, 27.5, 19, pillInk, { ls: 0.8 }), txt(pct, 236, 27, 17, pillInk, { align: "right" })]
+      },
+      /* @__PURE__ */ React.createElement("span", { className: "wx-bat" }, /* @__PURE__ */ React.createElement(BatteryBar, { level: battery.level, w: 46, h: 15 }))
+    ))
+  );
+}
+function LoveWidget({ love, setLove }) {
+  const t = useContext(ThemeCtx);
+  return /* @__PURE__ */ React.createElement("div", { className: "love-wrap" + (love ? " love-on" : "") }, /* @__PURE__ */ React.createElement(Patch, { w: 128, h: 128, shape: "scallop", stitchInset: 8, className: "widget", seed: 33, relief: 1.4, marks: [txt("Love mode", 64, 88, 13, t.tokens.ink, { align: "center", weight: 700 })] }, /* @__PURE__ */ React.createElement("div", { className: "abs love" }, /* @__PURE__ */ React.createElement("span", { className: "love-heart" }, /* @__PURE__ */ React.createElement(Patch, { w: 80, h: 72, shape: "path", pathSpec: HEART_PATH, fabric: love ? "#b3262d" : "#a38b86", stitchInset: 7, stitchScale: 0.9, stitchColor: love ? "#efa49b" : "#dccbc5", seed: 77 })), /* @__PURE__ */ React.createElement(FabricSwitch, { on: love, onChange: setLove, w: 56, h: 24, label: "Love mode", id: "love-home" }))));
+}
+function CalendarWidget({ now }) {
+  const t = useContext(ThemeCtx), y = now.getFullYear(), m = now.getMonth(), today = now.getDate(), first = new Date(y, m, 1).getDay(), dim = new Date(y, m + 1, 0).getDate(), cells = [];
+  for (let i = 0; i < first; i++) cells.push(null);
+  for (let d = 1; d <= dim; d++) cells.push(d);
+  const idx = first + today - 1, col = idx % 7, row = Math.floor(idx / 7), gx = 13, gw = 172, cw = gw / 7, gy = 40, rh = 12.6, ring = { k: "svg", svg: `<circle cx="24" cy="24" r="18" fill="none" stroke="${t.tokens.accent}" stroke-width="5"/>`, x: gx + col * cw + cw / 2 - 9.5, y: gy + row * rh + rh / 2 - 9.5, size: 19 };
+  return /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w: 198,
+      h: 128,
+      r: 20,
+      stitchInset: 6.5,
+      className: "widget",
+      role: "group",
+      "aria-label": "Calendar, " + MONTHS[m] + " " + y,
+      seed: 34,
+      relief: 1.2,
+      marks: [txt(MONTHS[m] + " " + y, 13, 23, 13, t.tokens.ink, { weight: 700 }), ring]
+    },
+    /* @__PURE__ */ React.createElement("div", { className: "abs cal" }, /* @__PURE__ */ React.createElement("div", { className: "cal-grid", style: { left: gx, width: gw, top: gy - 12 } }, ["S", "M", "T", "W", "T", "F", "S"].map((d, i) => /* @__PURE__ */ React.createElement("span", { key: "h" + i, className: "cal-dow" }, d)), cells.map((d, i) => /* @__PURE__ */ React.createElement("span", { key: i, className: "cal-d" + (d === today ? " today" : "") }, d || ""))))
+  );
+}
+function SearchBar({ apps, onOpen }) {
+  const [q, setQ] = useState(""), res = q.trim() ? apps.filter((a) => a.name.toLowerCase().includes(q.trim().toLowerCase())).slice(0, 4) : [];
+  return /* @__PURE__ */ React.createElement("div", { className: "search-wrap" }, /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w: 336,
+      h: 46,
+      shape: "pill",
+      stitchInset: 5.5,
+      className: "widget",
+      seed: 35,
+      relief: 1.6,
+      marks: [{ k: "svg", svg: GLYPHS.googleG(), x: 14, y: 11, size: 24 }, ...q ? [] : [glyphMark("mic", "#4285f4", 298, 11, 24)]]
+    },
+    /* @__PURE__ */ React.createElement("div", { className: "search-row" }, /* @__PURE__ */ React.createElement("input", { id: "home-search", className: "search-input", value: q, onChange: (e) => setQ(e.target.value), placeholder: "Search apps", "aria-label": "Search sample apps", autoComplete: "off" }), q && /* @__PURE__ */ React.createElement("button", { type: "button", className: "icon-btn", onClick: () => setQ(""), "aria-label": "Clear search" }, /* @__PURE__ */ React.createElement(Glyph, { name: "close", size: 20, color: "var(--ink)" })))
+  ), q.trim() && /* @__PURE__ */ React.createElement("div", { className: "search-drop" }, /* @__PURE__ */ React.createElement(Patch, { w: 336, h: res.length ? 96 : 50, r: 18, stitchInset: 6, seed: 36 }, res.length ? /* @__PURE__ */ React.createElement("div", { className: "search-res" }, res.map((a) => /* @__PURE__ */ React.createElement(FabricIcon, { key: a.id, app: a, size: 46, onClick: () => onOpen(a), labelColor: "var(--ink)" }))) : /* @__PURE__ */ React.createElement(Emb, { size: 13, small: !0 }, "No sample app matches \u201C", q.trim(), "\u201D"))));
+}
+function QuickTile({ glyph, active, onClick, label, dot, fabric }) {
+  const t = useContext(ThemeCtx), fab = fabric || (active ? t.tokens.accent : t.tokens.fabHi), onCream = contrast(CREAM_THREAD, fab) > 2, col = onCream ? CREAM_THREAD : inkFor(fab);
+  return /* @__PURE__ */ React.createElement("button", { type: "button", className: "qtile", onClick, "aria-label": label, "aria-pressed": active === void 0 ? void 0 : active }, /* @__PURE__ */ React.createElement(Patch, { w: 56, h: 56, r: 15, stitchInset: 5.5, fabric: fab, stitchColor: onCream ? CREAM_THREAD : t.tokens.thread, fray: 0.7, seed: hashStr(glyph) % 997, relief: 1.5, marks: [glyphMark(glyph, col, 12, 12, 32)] }, dot && /* @__PURE__ */ React.createElement("span", { className: "knot-dot", "aria-hidden": "true" })));
+}
+function QuickStrip({ sys, setSys, toast, openShade, unread }) {
+  const t = useContext(ThemeCtx);
+  return /* @__PURE__ */ React.createElement(Patch, { w: 336, h: 80, r: 10, stitchInset: 5, stitch: "double", fabric: t.tokens.fabLo, className: "widget strip", seed: 37 }, /* @__PURE__ */ React.createElement("div", { className: "strip-row" }, /* @__PURE__ */ React.createElement(QuickTile, { glyph: "wifi", active: sys.wifi, label: "Wi-Fi " + (sys.wifi ? "on" : "off"), onClick: () => {
+    setSys((s) => ({ ...s, wifi: !s.wifi })), toast("Wi-Fi " + (sys.wifi ? "off" : "on") + " (simulated)");
+  } }), /* @__PURE__ */ React.createElement(QuickTile, { glyph: "bluetooth", active: sys.bt, label: "Bluetooth " + (sys.bt ? "on" : "off"), onClick: () => {
+    setSys((s) => ({ ...s, bt: !s.bt })), toast("Bluetooth " + (sys.bt ? "off" : "on") + " (simulated)");
+  } }), /* @__PURE__ */ React.createElement(QuickTile, { glyph: "bell", fabric: "#4a4b4f", label: "Notifications, " + unread + " unread", dot: unread > 0, onClick: openShade }), /* @__PURE__ */ React.createElement(QuickTile, { glyph: "phone", fabric: "#2f6b3f", label: "Call", onClick: () => toast("A launcher would open the dialer here") }), /* @__PURE__ */ React.createElement(QuickTile, { glyph: "mail", fabric: "#9a2a27", label: "Messages", onClick: () => toast("A launcher would open your messages here") })));
+}
+function ClockWidget({ now }) {
+  const t = useContext(ThemeCtx), { hm, ap } = fmtTime(now), ink = t.tokens.ink, tw = textW(hm, 48, 600);
+  return /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w: 198,
+      h: 136,
+      r: 22,
+      stitchInset: 7.5,
+      className: "widget",
+      role: "group",
+      "aria-label": "Clock, device time",
+      seed: 38,
+      relief: 2.4,
+      satin: 1.1,
+      marks: [txt(hm, 16, 72, 48, ink), txt(ap, 20 + tw, 50, 16, ink, { weight: 700 }), txt(DAYS[now.getDay()] + ", " + now.getDate() + " " + MONTHS[now.getMonth()].slice(0, 3), 18, 104, 15, ink), { k: "svg", svg: GLYPHS.leaf(), x: 140, y: 78, size: 46 }]
+    }
+  );
+}
+function BatteryWidget({ battery }) {
+  const t = useContext(ThemeCtx), ink = t.tokens.ink;
+  return /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w: 128,
+      h: 136,
+      r: 22,
+      stitchInset: 7.5,
+      className: "widget",
+      role: "group",
+      "aria-label": "Battery",
+      seed: 39,
+      relief: 2.2,
+      marks: [txt("Battery", 64, 32, 13, ink, { align: "center", weight: 700 }), txt(Math.round(battery.level * 100) + "%", 64, 76, 32, ink, { align: "center" })]
+    },
+    /* @__PURE__ */ React.createElement("div", { className: "abs batw" }, /* @__PURE__ */ React.createElement(BatteryBar, { level: battery.level, w: 78, h: 18 }), /* @__PURE__ */ React.createElement("span", { className: "batw-note" }, battery.live ? battery.charging ? "Charging \xB7 live" : "From this device" : "Sample value"))
+  );
+}
+function MusicWidget({ playing, setPlaying, progress, skip }) {
+  const t = useContext(ThemeCtx), tracks = [["Good Vibes", "Chill Playlist"], ["Linen Morning", "Slow Folk"], ["Thread & Needle", "Quiet Hours"]], [title, sub] = tracks[progress.track % tracks.length], pw = 124, fw = Math.max(8, Math.round(pw * progress.p));
+  return /* @__PURE__ */ React.createElement(Patch, { w: 336, h: 92, r: 24, stitchInset: 7.5, className: "widget", role: "group", "aria-label": "Music player, sample", seed: 40, relief: 1.6, marks: [txt(title, 90, 36, 15, t.tokens.ink)] }, /* @__PURE__ */ React.createElement("div", { className: "abs music" }, /* @__PURE__ */ React.createElement(Patch, { w: 64, h: 64, r: 12, stitchInset: 4.5, stitchScale: 0.75, fabric: "#26446a", stitchColor: CREAM_THREAD, className: "album", seed: 41, relief: 1.3, marks: [{ k: "svg", svg: GLYPHS.album(), x: 7, y: 7, size: 50 }] }), /* @__PURE__ */ React.createElement("div", { className: "music-meta" }, /* @__PURE__ */ React.createElement("span", { className: "music-sub" }, sub), /* @__PURE__ */ React.createElement("span", { className: "music-prog" }, /* @__PURE__ */ React.createElement(Patch, { w: pw, h: 8, shape: "pill", raised: !1, stitch: !1, fabric: t.tokens.recess, seed: 42 }, /* @__PURE__ */ React.createElement("span", { className: "music-fill" }, /* @__PURE__ */ React.createElement(Patch, { w: fw, h: 6, shape: "pill", stitch: !1, fabric: t.tokens.accent, seed: 43 }))))), /* @__PURE__ */ React.createElement("div", { className: "music-ctl" }, /* @__PURE__ */ React.createElement("button", { type: "button", className: "icon-btn", onClick: () => skip(-1), "aria-label": "Previous track" }, /* @__PURE__ */ React.createElement(Glyph, { name: "prev", size: 24, color: t.tokens.ink })), /* @__PURE__ */ React.createElement("button", { type: "button", className: "icon-btn", onClick: () => setPlaying((p) => !p), "aria-label": playing ? "Pause" : "Play" }, /* @__PURE__ */ React.createElement(Patch, { w: 40, h: 40, shape: "circle", stitchInset: 3.8, stitchScale: 0.7, fabric: t.tokens.accent, stitchColor: CREAM_THREAD, seed: 44, relief: 1.4, marks: [glyphMark(playing ? "pause" : "play", inkFor(t.tokens.accent) === inkFor("#000000") ? CREAM_THREAD : "#2a221a", 10, 10, 20)] })), /* @__PURE__ */ React.createElement("button", { type: "button", className: "icon-btn", onClick: () => skip(1), "aria-label": "Next track" }, /* @__PURE__ */ React.createElement(Glyph, { name: "next", size: 24, color: t.tokens.ink })))));
+}
+function NotificationShade({ open, onClose, items }) {
+  return open ? /* @__PURE__ */ React.createElement("div", { className: "shade", onClick: onClose, role: "dialog", "aria-label": "Sample notifications" }, /* @__PURE__ */ React.createElement("div", { className: "shade-list", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "shade-head" }, /* @__PURE__ */ React.createElement("span", null, "Sample notifications"), /* @__PURE__ */ React.createElement("button", { type: "button", className: "shade-close", onClick: onClose }, "Close")), items.map((n, i) => /* @__PURE__ */ React.createElement(Patch, { key: i, w: 336, h: 66, r: 18, stitchInset: 6, className: "shade-item", seed: 50 + i }, /* @__PURE__ */ React.createElement("div", { className: "abs shade-row" }, /* @__PURE__ */ React.createElement(FabricIcon, { app: APP_BY_ID[n.app], size: 40, label: !1 }), /* @__PURE__ */ React.createElement("div", { className: "shade-text" }, /* @__PURE__ */ React.createElement(Emb, { size: 13, small: !0, weight: 700 }, n.title), /* @__PURE__ */ React.createElement("span", null, n.body)), /* @__PURE__ */ React.createElement("span", { className: "shade-when" }, n.when)))), /* @__PURE__ */ React.createElement("p", { className: "shade-note" }, "These are sample notifications. Restyling real Android notifications needs a native app and is limited by the system."))) : null;
+}
+function ForecastWidget({ now }) {
+  const t = useContext(ThemeCtx), ink = t.tokens.ink, soft = t.tokens.inkSoft, data = [["sunR", 31, 24], ["partly", 29, 23], ["rain", 26, 21], ["cloud", 27, 22], ["sunR", 30, 23]], cw = 308 / 5, marks = [txt("5-day forecast", 16, 25, 13, ink, { weight: 700 }), txt("sample data", 320, 25, 11, soft, { align: "right" })];
+  return data.forEach(([g, hi, lo], k) => {
+    const cx = 14 + cw * k + cw / 2, d = new Date(now);
+    d.setDate(d.getDate() + k), marks.push(txt(k === 0 ? "Today" : DAYS[d.getDay()], cx, 47, 11.5, soft, { align: "center", weight: 700 }), { k: "svg", svg: GLYPHS[g](), x: cx - 16, y: 52, size: 32 }, txt(hi + "\xB0", cx - 1, 105, 15, ink, { align: "right" }), txt(lo + "\xB0", cx + 3, 105, 12, soft));
+  }), /* @__PURE__ */ React.createElement(Patch, { w: 336, h: 120, r: 22, stitchInset: 7.5, className: "widget", role: "group", "aria-label": "Five-day forecast, sample data", seed: 90, relief: 1.5, marks });
+}
+function TodoWidget() {
+  const t = useContext(ThemeCtx), [items, setItems] = useState([{ text: "Water the herbs", done: !0 }, { text: "Hem the blue skirt", done: !1 }, { text: "Call Mira", done: !1 }]), left = items.filter((i) => !i.done).length;
+  return /* @__PURE__ */ React.createElement(
+    Patch,
+    {
+      w: 198,
+      h: 156,
+      r: 20,
+      stitchInset: 7,
+      className: "widget",
+      seed: 91,
+      relief: 1.4,
+      role: "group",
+      "aria-label": "Checklist",
+      marks: [txt("Today", 16, 30, 15, t.tokens.ink, { weight: 700 }), txt(left ? left + " left" : "All done", 182, 30, 11.5, t.tokens.inkSoft, { align: "right", weight: 700 })]
+    },
+    /* @__PURE__ */ React.createElement("div", { className: "abs todo" }, items.map((it, k) => /* @__PURE__ */ React.createElement("button", { key: k, type: "button", className: "todo-row" + (it.done ? " done" : ""), "aria-pressed": it.done, onClick: () => setItems((a) => a.map((x, j) => j === k ? { ...x, done: !x.done } : x)) }, /* @__PURE__ */ React.createElement(Patch, { w: 20, h: 20, r: 6, stitchInset: 3, stitchScale: 0.5, fabric: it.done ? t.tokens.accent : t.tokens.fabHi, stitchColor: it.done ? CREAM_THREAD : void 0, seed: 92 + k, relief: 1, marks: it.done ? [glyphMark("check", CREAM_THREAD, 2.5, 2.5, 15)] : null }), /* @__PURE__ */ React.createElement("span", { className: "todo-text" }, it.text))))
+  );
+}
+function WaterWidget() {
+  const t = useContext(ThemeCtx), [n, setN] = useState(5), marks = [txt("Water", 64, 30, 13, t.tokens.ink, { align: "center", weight: 700 }), txt(n + " of 8", 64, 136, 14, t.tokens.ink, { align: "center" })];
+  for (let k = 0; k < 8; k++) {
+    const col = k % 4, row = Math.floor(k / 4);
+    marks.push({ k: "svg", svg: k < n ? GLYPHS.drop("#3f7cc4") : GLYPHS.dropOutline(t.tokens.inkSoft), x: 13 + col * 26, y: 44 + row * 38, size: 26 });
+  }
+  return /* @__PURE__ */ React.createElement("button", { type: "button", className: "water-btn", onClick: () => setN((v) => v >= 8 ? 0 : v + 1), "aria-label": `Water, ${n} of 8 glasses. Tap to add one.` }, /* @__PURE__ */ React.createElement(Patch, { w: 128, h: 156, r: 20, stitchInset: 7, className: "widget", seed: 95, relief: 1.4, marks }));
+}
+const FAVS = [["Mira", "#b8566b"], ["Dad", "#3f6f9e"], ["Ana", "#6c8a3a"], ["Sam", "#8b5fb0"]];
+function ContactsWidget({ toast }) {
+  return /* @__PURE__ */ React.createElement(Patch, { w: 336, h: 100, r: 24, stitchInset: 7, className: "widget", seed: 96, role: "group", "aria-label": "Favorite contacts, sample" }, /* @__PURE__ */ React.createElement("div", { className: "contacts" }, FAVS.map(([nm, c]) => /* @__PURE__ */ React.createElement("button", { key: nm, type: "button", className: "contact", onClick: () => toast(`A launcher would call ${nm} here`), "aria-label": "Call " + nm }, /* @__PURE__ */ React.createElement(Patch, { w: 50, h: 50, shape: "circle", fabric: c, stitchInset: 4.5, stitchScale: 0.75, stitchColor: CREAM_THREAD, fray: 0.5, seed: hashStr(nm) % 997, relief: 1.5, marks: [txt(nm[0], 25, 33, 22, CREAM_THREAD, { align: "center", weight: 700 })] }), /* @__PURE__ */ React.createElement("span", { className: "contact-name" }, nm)))));
+}
+const RWeather = withRole("weather", WeatherWidget), RLove = withRole("love", LoveWidget), RCalendar = withRole("calendar", CalendarWidget), RSearch = withRole("search", SearchBar), RStrip = withRole("strip", QuickStrip), RClock = withRole("clock", ClockWidget), RBattery = withRole("battery", BatteryWidget), RMusic = withRole("music", MusicWidget), RForecast = withRole("forecast", ForecastWidget), RTodo = withRole("todo", TodoWidget), RWater = withRole("water", WaterWidget), RContacts = withRole("contacts", ContactsWidget), PAGE1_APPS = ["whatsapp", "instagram", "youtube", "maps"], PAGE2_APPS = ["spotify", "calendar", "settings", "game", "studio"], DOCK_APPS = ["phone", "messages", "chrome", "camera"];
+function Phone({ theme, wallSrc, love, setLove, onOpenStudio, extraApps }) {
+  const now = useNow(), battery = useBattery(), [sys, setSys] = useState({ wifi: !0, bt: !1 }), [page, setPage] = useState(0), [shade, setShade] = useState(!1), [unread, setUnread] = useState(3), [toastMsg, setToastMsg] = useState(null), [playing, setPlaying] = useState(!1), [prog, setProg] = useState({ p: 0.32, track: 0 }), toastT = useRef(0), toast = useCallback((msg) => {
+    setToastMsg(msg), clearTimeout(toastT.current), toastT.current = setTimeout(() => setToastMsg(null), 2400);
+  }, []);
+  useEffect(() => {
+    if (!playing) return;
+    const i = setInterval(() => setProg((p) => p.p >= 1 ? { p: 0, track: p.track + 1 } : { ...p, p: Math.min(1, p.p + 0.02) }), 1200);
+    return () => clearInterval(i);
+  }, [playing]);
+  const skip = (d) => setProg((p) => ({ p: 0, track: (p.track + d + 3) % 3 })), allApps = useMemo(() => [...APPS, ...extraApps], [extraApps]), openApp = (a) => {
+    if (a.id === "studio") {
+      onOpenStudio();
+      return;
+    }
+    toast(`${a.name}: opening apps needs the native launcher`);
+  }, drag = useRef(null), swipedAt = useRef(0), onDown = (e) => {
+    e.target.closest("input,.fslider") || (drag.current = { x: e.clientX, y: e.clientY });
+  }, onUp = (e) => {
+    const d = drag.current;
+    if (drag.current = null, !d) return;
+    const dx = e.clientX - d.x, dy = e.clientY - d.y;
+    Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4 && (swipedAt.current = Date.now(), setPage((p) => clamp(p + (dx < 0 ? 1 : -1), 0, 2)));
+  }, onClickCap = (e) => {
+    Date.now() - swipedAt.current < 350 && (e.stopPropagation(), e.preventDefault());
+  }, notes = [
+    { app: "messages", title: "Mira", body: "Dinner at 8? I\u2019ll bring the bread.", when: "2m" },
+    { app: "calendar", title: "Quilting circle", body: "Today, 6:00 PM \xB7 Community hall", when: "1h" },
+    { app: "spotify", title: "Good Vibes", body: "Downloaded for offline listening", when: "3h" }
+  ];
+  return /* @__PURE__ */ React.createElement(ThemeScope, { theme, className: "screen", "aria-label": "Fabric home screen preview" }, /* @__PURE__ */ React.createElement("div", { className: "wall", style: { backgroundImage: wallSrc ? `url(${wallSrc})` : null } }), /* @__PURE__ */ React.createElement("div", { className: "wall-tint" }), love && /* @__PURE__ */ React.createElement("div", { className: "love-confetti", "aria-hidden": "true" }, [[34, 600, 16, -12], [300, 592, 15, 18], [124, 638, 12, 8], [228, 620, 13, -20]].map(([x, y, s, r], i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { position: "absolute", left: x, top: y, transform: `rotate(${r}deg)` } }, /* @__PURE__ */ React.createElement(Patch, { w: s + 6, h: s + 2, shape: "path", pathSpec: HEART_PATH, fabric: "#b3262d", stitch: !1, seed: 80 + i })))), /* @__PURE__ */ React.createElement(StatusBar, { now, sys, love, battery }), /* @__PURE__ */ React.createElement("div", { className: "pager", onClickCapture: onClickCap, onPointerDown: onDown, onPointerUp: onUp, onPointerCancel: () => {
+    drag.current = null;
+  } }, /* @__PURE__ */ React.createElement("div", { className: "pager-track", style: { width: 360 * 3, transform: `translateX(${-page * 360}px)` } }, /* @__PURE__ */ React.createElement("div", { className: "page", "aria-hidden": page !== 0 }, /* @__PURE__ */ React.createElement(RWeather, { now, battery, onTap: () => toast("Weather and air quality are sample data") }), /* @__PURE__ */ React.createElement("div", { className: "row" }, /* @__PURE__ */ React.createElement(RLove, { love, setLove }), /* @__PURE__ */ React.createElement(RCalendar, { now })), /* @__PURE__ */ React.createElement(RSearch, { apps: allApps, onOpen: openApp }), /* @__PURE__ */ React.createElement(RStrip, { sys, setSys, toast, unread, openShade: () => {
+    setShade(!0), setUnread(0);
+  } }), /* @__PURE__ */ React.createElement("div", { className: "grid" }, PAGE1_APPS.map((id) => /* @__PURE__ */ React.createElement(FabricIcon, { key: id, app: APP_BY_ID[id], onClick: () => openApp(APP_BY_ID[id]) })))), /* @__PURE__ */ React.createElement("div", { className: "page", "aria-hidden": page !== 1 }, /* @__PURE__ */ React.createElement("div", { className: "row" }, /* @__PURE__ */ React.createElement(RClock, { now }), /* @__PURE__ */ React.createElement(RBattery, { battery })), /* @__PURE__ */ React.createElement(RMusic, { playing, setPlaying, progress: prog, skip }), /* @__PURE__ */ React.createElement("div", { className: "grid" }, [...PAGE2_APPS.map((id) => APP_BY_ID[id]), ...extraApps].slice(0, 8).map((a) => /* @__PURE__ */ React.createElement(FabricIcon, { key: a.id, app: a, onClick: () => openApp(a) })))), /* @__PURE__ */ React.createElement("div", { className: "page", "aria-hidden": page !== 2 }, /* @__PURE__ */ React.createElement(RForecast, { now }), /* @__PURE__ */ React.createElement("div", { className: "row" }, /* @__PURE__ */ React.createElement(RTodo, null), /* @__PURE__ */ React.createElement(RWater, null)), /* @__PURE__ */ React.createElement(RContacts, { toast })))), /* @__PURE__ */ React.createElement("div", { className: "dots", role: "tablist", "aria-label": "Home screen pages" }, [0, 1, 2].map((i) => /* @__PURE__ */ React.createElement("button", { key: i, type: "button", role: "tab", "aria-selected": page === i, "aria-label": "Page " + (i + 1), className: "dot" + (page === i ? " on" : ""), onClick: () => setPage(i) }, /* @__PURE__ */ React.createElement("span", { className: "knot", style: { background: page === i ? theme.tokens.thread : "rgba(255,255,255,.55)" } })))), /* @__PURE__ */ React.createElement("div", { className: "dock" }, /* @__PURE__ */ React.createElement(Patch, { w: 336, h: 80, r: 30, stitchInset: 7, className: "widget", seed: 45, fabric: theme.roles && theme.roles.dock || theme.tokens.fab }, /* @__PURE__ */ React.createElement("div", { className: "dock-row" }, DOCK_APPS.map((id) => /* @__PURE__ */ React.createElement(FabricIcon, { key: id, app: APP_BY_ID[id], size: 54, label: !1, onClick: () => openApp(APP_BY_ID[id]) }))))), /* @__PURE__ */ React.createElement("div", { className: "navbar", "aria-hidden": "true" }), /* @__PURE__ */ React.createElement(NotificationShade, { open: shade, onClose: () => setShade(!1), items: notes }), toastMsg && /* @__PURE__ */ React.createElement("div", { className: "toast", role: "status" }, /* @__PURE__ */ React.createElement(Patch, { h: 38, shape: "pill", stitchInset: 4.5, stitchScale: 0.8, style: { padding: "0 18px" }, seed: 46 }, /* @__PURE__ */ React.createElement(Emb, { size: 12.5, small: !0, weight: 600 }, toastMsg))));
+}
+function Section({ title, hint, children, id }) {
+  return /* @__PURE__ */ React.createElement("section", { className: "sec", "aria-labelledby": id }, /* @__PURE__ */ React.createElement("div", { className: "sec-head" }, /* @__PURE__ */ React.createElement("h3", { id }, title), hint && /* @__PURE__ */ React.createElement("p", { className: "sec-hint" }, hint)), children);
+}
+function Seg({ options, value, onChange, label, id }) {
+  return /* @__PURE__ */ React.createElement("div", { className: "seg", role: "radiogroup", "aria-label": label, id }, options.map((o) => /* @__PURE__ */ React.createElement("button", { key: o.value, type: "button", role: "radio", "aria-checked": value === o.value, className: value === o.value ? "on" : "", onClick: () => onChange(o.value) }, o.label)));
+}
+function FabricSwatch({ hex, name, selected, onClick, size = 36 }) {
+  return /* @__PURE__ */ React.createElement("button", { type: "button", className: "swatch" + (selected ? " sel" : ""), onClick, title: name, "aria-label": name + (selected ? ", selected" : ""), "aria-pressed": selected }, /* @__PURE__ */ React.createElement(Patch, { w: size, h: size, shape: "circle", fabric: hex, stitch: !1 }));
+}
+function Bobbin({ hex, size = 36 }) {
+  const dk = mix(hex, "#000", 0.3), lt = mix(hex, "#fff", 0.25);
+  return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 36 36", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("rect", { x: "6", y: "3", width: "24", height: "5", rx: "2", fill: "#b98a5a" }), /* @__PURE__ */ React.createElement("rect", { x: "6", y: "28", width: "24", height: "5", rx: "2", fill: "#a27447" }), /* @__PURE__ */ React.createElement("g", { filter: "url(#f-emb-sm)" }, /* @__PURE__ */ React.createElement("rect", { x: "8.5", y: "8", width: "19", height: "20", fill: hex }), [10, 13, 16, 19, 22, 25].map((y) => /* @__PURE__ */ React.createElement("path", { key: y, d: `M8.5 ${y}l19 2.4`, stroke: y % 2 ? dk : lt, strokeWidth: "1.1", opacity: ".7" }))));
+}
+function ThreadSwatch({ t, selected, onClick }) {
+  return /* @__PURE__ */ React.createElement("button", { type: "button", className: "bobbin" + (selected ? " sel" : ""), onClick, "aria-label": `${t.name}, close to DMC ${t.code}${selected ? ", selected" : ""}`, "aria-pressed": selected, title: `${t.name} \xB7 \u2248 DMC ${t.code}` }, /* @__PURE__ */ React.createElement(Bobbin, { hex: t.hex }), /* @__PURE__ */ React.createElement("span", { className: "bobbin-code" }, t.code));
+}
+function ColorField({ value, onChange, id, label }) {
+  const [txt2, setTxt] = useState(value);
+  return useEffect(() => setTxt(value), [value]), /* @__PURE__ */ React.createElement("div", { className: "colorfield" }, /* @__PURE__ */ React.createElement("label", { htmlFor: id + "-pick", className: "cf-pick", style: { background: value } }, /* @__PURE__ */ React.createElement("input", { id: id + "-pick", type: "color", value, onChange: (e) => onChange(e.target.value), "aria-label": label + " picker" })), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      id: id + "-hex",
+      className: "cf-hex",
+      value: txt2,
+      spellCheck: "false",
+      "aria-label": label + " hex value",
+      onChange: (e) => {
+        const v = e.target.value.trim();
+        setTxt(v);
+        const h = v.startsWith("#") ? v : "#" + v;
+        isHex(h) && onChange(h.toLowerCase());
+      }
+    }
+  ));
+}
+function MaterialCard({ id, m, selected, onClick, fab }) {
+  const scoped = { ...useContext(ThemeCtx), material: id };
+  return /* @__PURE__ */ React.createElement("button", { type: "button", className: "card" + (selected ? " sel" : ""), onClick, "aria-pressed": selected }, /* @__PURE__ */ React.createElement(ThemeScope, { theme: scoped, className: "card-swatch" }, /* @__PURE__ */ React.createElement(Patch, { w: 84, h: 48, r: 10, stitchInset: 5, fabric: fab })), /* @__PURE__ */ React.createElement("span", { className: "card-title" }, m.label), /* @__PURE__ */ React.createElement("span", { className: "card-note" }, m.note));
+}
+function StitchCard({ id, st, selected, onClick, color }) {
+  return /* @__PURE__ */ React.createElement("button", { type: "button", className: "card" + (selected ? " sel" : ""), onClick, "aria-pressed": selected }, /* @__PURE__ */ React.createElement("span", { className: "card-swatch stitch-demo" }, /* @__PURE__ */ React.createElement(Patch, { w: 100, h: 44, r: 9, stitch: id, stitchInset: 8, stitchColor: color, seed: 60 })), /* @__PURE__ */ React.createElement("span", { className: "card-title" }, st.label), /* @__PURE__ */ React.createElement("span", { className: "card-note" }, st.note));
+}
+function WallpaperPicker({ wallpapers, srcs, value, onPick, onUpload, error }) {
+  const fileRef = useRef(null);
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "walls" }, wallpapers.map((w) => /* @__PURE__ */ React.createElement("button", { key: w.id, type: "button", className: "wall-thumb" + (value === w.id ? " sel" : ""), onClick: () => onPick(w.id), "aria-pressed": value === w.id, "aria-label": w.name }, srcs[w.id] ? /* @__PURE__ */ React.createElement("img", { src: srcs[w.id], alt: "" }) : /* @__PURE__ */ React.createElement("span", { className: "wall-wait" }, "Drawing\u2026"), /* @__PURE__ */ React.createElement("span", { className: "wall-name" }, w.name))), /* @__PURE__ */ React.createElement("button", { type: "button", className: "wall-thumb wall-add", onClick: () => fileRef.current && fileRef.current.click() }, /* @__PURE__ */ React.createElement("span", { className: "wall-plus", "aria-hidden": "true" }, "+"), /* @__PURE__ */ React.createElement("span", { className: "wall-name" }, "Your photo")), /* @__PURE__ */ React.createElement("input", { ref: fileRef, id: "wall-upload", type: "file", accept: "image/*", className: "sr-only", onChange: (e) => {
+    onUpload(e.target.files && e.target.files[0]), e.target.value = "";
+  } })), error && /* @__PURE__ */ React.createElement("p", { className: "err", role: "alert" }, error), /* @__PURE__ */ React.createElement("p", { className: "fine" }, "Sample scenes are drawn in your browser. Your photo stays on this device and is not uploaded anywhere."));
+}
+function SuggestionCard({ state, mode, source, onApply, wallName }) {
+  if (!state || state.status === "pending") return /* @__PURE__ */ React.createElement("div", { className: "sugg" }, /* @__PURE__ */ React.createElement("p", { className: "fine" }, "Reading colors from ", wallName, "\u2026"));
+  if (state.status === "error") return /* @__PURE__ */ React.createElement("div", { className: "sugg" }, /* @__PURE__ */ React.createElement("p", { className: "err" }, "Colors could not be read from this image, so there is nothing to suggest. Your current colors stay in place."));
+  const s = state.data[mode], chips = [["Fabric", s.fabric], ["Accent", s.accent], ["Thread", s.thread], ["Text", s.text]];
+  return /* @__PURE__ */ React.createElement("div", { className: "sugg" }, /* @__PURE__ */ React.createElement("div", { className: "sugg-clusters", "aria-label": "Dominant wallpaper colors" }, state.data.clusters.map((c, i) => /* @__PURE__ */ React.createElement("span", { key: i, style: { background: c.hex, flexGrow: c.w }, title: c.hex + " \xB7 " + Math.round(c.w * 100) + "%" }))), /* @__PURE__ */ React.createElement("div", { className: "sugg-chips" }, chips.map(([k, v]) => /* @__PURE__ */ React.createElement("span", { key: k, className: "chip" }, /* @__PURE__ */ React.createElement("span", { className: "chip-dot", style: { background: v } }), k, /* @__PURE__ */ React.createElement("code", null, v)))), /* @__PURE__ */ React.createElement("p", { className: "fine" }, "Measured from ", state.data.samples.toLocaleString(), " sampled pixels of ", wallName, ", grouped into ", state.data.clusters.length, " color clusters. Suggestion for ", mode, " mode."), source === "manual" && /* @__PURE__ */ React.createElement("button", { type: "button", className: "btn", onClick: onApply }, "Use these colors"), source === "auto" && /* @__PURE__ */ React.createElement("p", { className: "fine" }, "These colors are applied now. Pick any fabric, thread or accent below to switch to your own colors."));
+}
+function Studio({ s, act, theme, wallpapers, srcs, analysis, wallErr, labApp, setLabApp, sampleApps, goTab, wallSrc }) {
+  const pal = theme.pal, [confirm, setConfirm] = useState(!1), ideas = threadIdeas(pal.fabric, pal.accent), wall = wallpapers.find((w) => w.id === s.wallpaper);
+  return /* @__PURE__ */ React.createElement(ThemeScope, { theme, className: "panel-body" }, /* @__PURE__ */ React.createElement(Section, { title: "Appearance", id: "h-app", hint: "Light and Dark are separate looks. Each one remembers its own fabric, thread and accent." }, /* @__PURE__ */ React.createElement(Seg, { id: "mode-seg", label: "Appearance mode", value: s.mode, onChange: act.setMode, options: [{ value: "light", label: "Light" }, { value: "dark", label: "Dark" }] })), /* @__PURE__ */ React.createElement(Section, { title: "Matching themes", id: "h-presets", hint: "Each theme has a light and a dark version. Both color every widget to match, and switching modes swaps between them." }, /* @__PURE__ */ React.createElement("div", { className: "presets" }, PRESETS.map((p) => /* @__PURE__ */ React.createElement("button", { key: p.id, type: "button", className: "preset" + (s.preset === p.id ? " sel" : ""), onClick: () => act.applyPreset(p.id), "aria-pressed": s.preset === p.id }, /* @__PURE__ */ React.createElement("span", { className: "preset-head" }, /* @__PURE__ */ React.createElement("span", { className: "card-title" }, p.name), /* @__PURE__ */ React.createElement("span", { className: "card-note" }, MATERIALS[p.material].label)), ["light", "dark"].map((m) => /* @__PURE__ */ React.createElement("span", { key: m, className: "preset-row" }, /* @__PURE__ */ React.createElement("span", { className: "preset-tag" }, m === "light" ? "Light" : "Dark"), ["weather", "search", "clock", "music", "love", "dock"].map((r) => /* @__PURE__ */ React.createElement("span", { key: r, className: "preset-dot", style: { background: p[m].roles[r] } })), /* @__PURE__ */ React.createElement("span", { className: "preset-dot thread", style: { background: p[m].thread }, title: "Thread" })))))), !s.preset && /* @__PURE__ */ React.createElement("p", { className: "fine" }, "Your own fabric color now covers every widget in this mode. Pick a theme to bring back matching widget colors.")), /* @__PURE__ */ React.createElement(Section, { title: "Wallpaper", id: "h-wall", hint: "The photo stays visible behind every widget." }, /* @__PURE__ */ React.createElement(WallpaperPicker, { wallpapers, srcs, value: s.wallpaper, onPick: act.setWallpaper, onUpload: act.upload, error: wallErr })), /* @__PURE__ */ React.createElement(Section, { title: "Colors from wallpaper", id: "h-src" }, /* @__PURE__ */ React.createElement(Seg, { id: "src-seg", label: "Color source", value: s.source, onChange: act.setSource, options: [{ value: "auto", label: "Match wallpaper" }, { value: "manual", label: "My colors" }] }), /* @__PURE__ */ React.createElement(SuggestionCard, { state: analysis[s.wallpaper], mode: s.mode, source: s.source, onApply: act.applySuggestion, wallName: wall ? wall.name : "this wallpaper" })), /* @__PURE__ */ React.createElement(Section, { title: "Fabric", id: "h-fab", hint: "The dye under the weave. The grain and stitches stay put whatever you pick." }, /* @__PURE__ */ React.createElement("div", { className: "swatches" }, FABRICS.map((f) => /* @__PURE__ */ React.createElement(FabricSwatch, { key: f.hex, hex: f.hex, name: f.name, selected: pal.fabric === f.hex, onClick: () => act.setColor("fabric", f.hex) }))), /* @__PURE__ */ React.createElement(ColorField, { id: "fab-custom", label: "Fabric color", value: pal.fabric, onChange: (v) => act.setColor("fabric", v) })), /* @__PURE__ */ React.createElement(Section, { title: "Thread", id: "h-thread", hint: "Stitches and outlines. Codes are the nearest DMC stranded-cotton shade." }, /* @__PURE__ */ React.createElement("div", { className: "swatches bobbins" }, THREADS.map((th) => /* @__PURE__ */ React.createElement(ThreadSwatch, { key: th.hex, t: th, selected: pal.thread === th.hex, onClick: () => act.setColor("thread", th.hex) }))), /* @__PURE__ */ React.createElement("div", { className: "ideas" }, /* @__PURE__ */ React.createElement("span", { className: "ideas-label" }, "Suggested for this fabric"), ideas.map((i) => /* @__PURE__ */ React.createElement("button", { key: i.id, type: "button", className: "chip chip-btn" + (pal.thread === i.hex ? " sel" : ""), onClick: () => act.setColor("thread", i.hex) }, /* @__PURE__ */ React.createElement("span", { className: "chip-dot", style: { background: i.hex } }), i.label))), /* @__PURE__ */ React.createElement(ColorField, { id: "thread-custom", label: "Thread color", value: pal.thread, onChange: (v) => act.setColor("thread", v) })), /* @__PURE__ */ React.createElement(Section, { title: "Accent", id: "h-acc", hint: "Active toggles, today\u2019s date, the battery fill and the play button." }, /* @__PURE__ */ React.createElement("div", { className: "swatches" }, ACCENTS.map((a) => /* @__PURE__ */ React.createElement(FabricSwatch, { key: a.hex, hex: a.hex, name: a.name, selected: pal.accent === a.hex, onClick: () => act.setColor("accent", a.hex), size: 32 }))), /* @__PURE__ */ React.createElement(ColorField, { id: "acc-custom", label: "Accent color", value: pal.accent, onChange: (v) => act.setColor("accent", v) })), /* @__PURE__ */ React.createElement(Section, { title: "Material", id: "h-mat", hint: "Each material uses its own photographed weave." }, /* @__PURE__ */ React.createElement("div", { className: "cards" }, Object.entries(MATERIALS).map(([id, m]) => /* @__PURE__ */ React.createElement(MaterialCard, { key: id, id, m, fab: pal.fabric, selected: s.material === id, onClick: () => act.set("material", id) })))), /* @__PURE__ */ React.createElement(Section, { title: "Stitch", id: "h-st" }, /* @__PURE__ */ React.createElement("div", { className: "cards" }, Object.entries(STITCHES).map(([id, st]) => /* @__PURE__ */ React.createElement(StitchCard, { key: id, id, st, color: pal.thread, selected: s.stitch === id, onClick: () => act.set("stitch", id) })))), /* @__PURE__ */ React.createElement(Section, { title: "App icons", id: "h-icons", hint: "How logos sit on their patches." }, /* @__PURE__ */ React.createElement("div", { className: "cards" }, [["themed", "Themed", "Your fabric, logo in brand thread"], ["dyed", "Dyed", "Brand-dyed patch, light thread"], ["accent", "Accent", "Accent patch, your thread"]].map(([id, title, note]) => /* @__PURE__ */ React.createElement("button", { key: id, type: "button", className: "card" + (s.iconStyle === id ? " sel" : ""), onClick: () => act.set("iconStyle", id), "aria-pressed": s.iconStyle === id }, /* @__PURE__ */ React.createElement(ThemeScope, { theme: { ...theme, iconStyle: id }, className: "card-swatch icon-demo" }, /* @__PURE__ */ React.createElement(FabricIcon, { app: APP_BY_ID.whatsapp, size: 44, label: !1 }), /* @__PURE__ */ React.createElement(FabricIcon, { app: APP_BY_ID.youtube, size: 44, label: !1 })), /* @__PURE__ */ React.createElement("span", { className: "card-title" }, title), /* @__PURE__ */ React.createElement("span", { className: "card-note" }, note)))), /* @__PURE__ */ React.createElement("div", { className: "inline" }, /* @__PURE__ */ React.createElement("span", { className: "inline-label" }, "Patch shape"), /* @__PURE__ */ React.createElement(Seg, { id: "shape-seg", label: "Icon patch shape", value: s.iconShape, onChange: (v) => act.set("iconShape", v), options: [{ value: "rounded", label: "Rounded square" }, { value: "circle", label: "Circle" }] })), /* @__PURE__ */ React.createElement("div", { className: "inline wrap" }, /* @__PURE__ */ React.createElement("span", { className: "inline-label" }, "Sample icon"), /* @__PURE__ */ React.createElement("div", { className: "app-chips" }, sampleApps.map((a) => /* @__PURE__ */ React.createElement("button", { key: a.id, type: "button", className: "chip chip-btn" + (labApp === a.id ? " sel" : ""), onClick: () => setLabApp(a.id) }, a.name)))), /* @__PURE__ */ React.createElement("div", { className: "sample-icon" }, /* @__PURE__ */ React.createElement("div", { className: "sample-stage", style: { backgroundImage: wallSrc ? `url(${wallSrc})` : null } }, /* @__PURE__ */ React.createElement(FabricIcon, { app: sampleApps.find((a) => a.id === labApp) || APPS[0], size: 96, labelColor: "#fff" })), /* @__PURE__ */ React.createElement("p", { className: "fine" }, "Rendered by the same function as every home-screen icon. ", /* @__PURE__ */ React.createElement("button", { type: "button", className: "link", onClick: () => goTab("icons") }, "Open the Icon Lab"), " to see each layer or try your own logo."))), /* @__PURE__ */ React.createElement(Section, { title: "Embroidery depth", id: "h-depth", hint: "Padding height, thread relief and shadow strength." }, /* @__PURE__ */ React.createElement("div", { className: "inline" }, /* @__PURE__ */ React.createElement("span", { className: "inline-label" }, "Flat"), /* @__PURE__ */ React.createElement(FabricSlider, { id: "depth", label: "Embroidery depth", value: s.depth, onChange: (v) => act.set("depth", v), width: 210 }), /* @__PURE__ */ React.createElement("span", { className: "inline-label" }, "Padded"))), /* @__PURE__ */ React.createElement(Section, { title: "Love Mode", id: "h-love", hint: "Makes the padded heart beat, scatters stitched hearts over the wallpaper and shows a heart in the status bar." }, /* @__PURE__ */ React.createElement("div", { className: "inline" }, /* @__PURE__ */ React.createElement(FabricSwitch, { id: "love-studio", on: s.love, onChange: (v) => act.set("love", v), label: "Love Mode" }), /* @__PURE__ */ React.createElement("span", { className: "inline-label" }, s.love ? "On" : "Off"))), /* @__PURE__ */ React.createElement(Section, { title: "Reset", id: "h-reset" }, confirm ? /* @__PURE__ */ React.createElement("div", { className: "confirm" }, /* @__PURE__ */ React.createElement("span", null, "Reset every theme setting, including both modes\u2019 colors?"), /* @__PURE__ */ React.createElement("button", { type: "button", className: "btn danger", onClick: () => {
+    act.reset(), setConfirm(!1);
+  } }, "Yes, reset"), /* @__PURE__ */ React.createElement("button", { type: "button", className: "btn ghost", onClick: () => setConfirm(!1) }, "Cancel")) : /* @__PURE__ */ React.createElement("button", { type: "button", className: "btn ghost", onClick: () => setConfirm(!0) }, "Reset to default")));
+}
+const LAYERS = [["base", "Dyed fabric base"], ["texture", "Woven texture map"], ["pad", "Padding, quilting, shadows, fraying"], ["stitch", "Stitched border"], ["logo", "App logo"], ["emb", "Padded satin relief on the logo"]];
+function IconLab({ theme, lightTheme, darkTheme, labApp, setLabApp, sampleApps, unknownName, setUnknownName, customLogo, setCustomLogo, wallSrc }) {
+  const [layers, setLayers] = useState({ base: !0, texture: !0, pad: !0, stitch: !0, logo: !0, emb: !0 }), [removeBg, setRemoveBg] = useState(!0), [err, setErr] = useState(null), fileRef = useRef(null), app = sampleApps.find((a) => a.id === labApp) || APPS[0], onFile = (f) => {
+    setErr(null), prepareLogo(f, removeBg).then((src) => {
+      setCustomLogo({ src, name: (f.name || "Your logo").replace(/\.[a-z0-9]+$/i, "").slice(0, 18) }), setLabApp("custom-logo");
+    }).catch((e) => setErr(e.message));
+  };
+  return /* @__PURE__ */ React.createElement(ThemeScope, { theme, className: "panel-body" }, /* @__PURE__ */ React.createElement(Section, { title: "One renderer for every app", id: "h-lab", hint: "An app is data: a name, a brand color and a logo. The renderer builds a height field from it (padding, quilted groove, weave, round thread, padded satin logo), lights it and adds shadows and frayed fibers." }, /* @__PURE__ */ React.createElement("div", { className: "lab" }, /* @__PURE__ */ React.createElement("div", { className: "lab-stage", style: { backgroundImage: wallSrc ? `url(${wallSrc})` : null } }, /* @__PURE__ */ React.createElement("div", { className: "lab-icon" }, /* @__PURE__ */ React.createElement(FabricIcon, { app, size: 150, layers, label: !1 }))), /* @__PURE__ */ React.createElement("div", { className: "lab-layers" }, /* @__PURE__ */ React.createElement("span", { className: "inline-label" }, "Layers"), LAYERS.map(([k, label]) => /* @__PURE__ */ React.createElement(FabricCheck, { key: k, id: "layer-" + k, checked: layers[k], onChange: (v) => setLayers((l) => ({ ...l, [k]: v })), label }))))), /* @__PURE__ */ React.createElement(Section, { title: "Choose an app", id: "h-pick" }, /* @__PURE__ */ React.createElement("div", { className: "app-chips" }, sampleApps.map((a) => /* @__PURE__ */ React.createElement("button", { key: a.id, type: "button", className: "chip chip-btn" + (labApp === a.id ? " sel" : ""), onClick: () => setLabApp(a.id) }, a.name))), /* @__PURE__ */ React.createElement("div", { className: "inline wrap" }, /* @__PURE__ */ React.createElement("label", { className: "inline-label", htmlFor: "unknown-name" }, "Unknown app name"), /* @__PURE__ */ React.createElement("input", { id: "unknown-name", className: "text-in", value: unknownName, maxLength: 24, onChange: (e) => {
+    setUnknownName(e.target.value), setLabApp("unknown");
+  } })), /* @__PURE__ */ React.createElement("p", { className: "fine" }, "An app without a usable logo gets a monogram on a patch dyed from a hash of its name, through the same renderer.")), /* @__PURE__ */ React.createElement(Section, { title: "Try your own logo", id: "h-logo", hint: "PNG or SVG with transparency works best. Nothing leaves this browser." }, /* @__PURE__ */ React.createElement("div", { className: "inline wrap" }, /* @__PURE__ */ React.createElement("button", { type: "button", className: "btn", onClick: () => fileRef.current && fileRef.current.click() }, "Choose a logo file"), /* @__PURE__ */ React.createElement("input", { ref: fileRef, id: "logo-upload", type: "file", accept: "image/*", className: "sr-only", onChange: (e) => {
+    onFile(e.target.files && e.target.files[0]), e.target.value = "";
+  } }), /* @__PURE__ */ React.createElement(FabricCheck, { id: "remove-bg", checked: removeBg, onChange: setRemoveBg, label: "Remove a plain background" }), customLogo && /* @__PURE__ */ React.createElement("button", { type: "button", className: "btn ghost", onClick: () => {
+    setCustomLogo(null), labApp === "custom-logo" && setLabApp("whatsapp");
+  } }, "Remove logo")), err && /* @__PURE__ */ React.createElement("p", { className: "err", role: "alert" }, err)), /* @__PURE__ */ React.createElement(Section, { title: "Sizes and modes", id: "h-sizes" }, /* @__PURE__ */ React.createElement("div", { className: "lab-sizes" }, /* @__PURE__ */ React.createElement(ThemeScope, { theme: lightTheme, className: "mode-tile light-tile" }, /* @__PURE__ */ React.createElement("span", { className: "mode-tag" }, "Light"), /* @__PURE__ */ React.createElement("div", { className: "lab-row" }, [40, 56, 72].map((z) => /* @__PURE__ */ React.createElement(FabricIcon, { key: z, app, size: z, label: !1 })))), /* @__PURE__ */ React.createElement(ThemeScope, { theme: darkTheme, className: "mode-tile dark-tile" }, /* @__PURE__ */ React.createElement("span", { className: "mode-tag" }, "Dark"), /* @__PURE__ */ React.createElement("div", { className: "lab-row" }, [40, 56, 72].map((z) => /* @__PURE__ */ React.createElement(FabricIcon, { key: z, app, size: z, label: !1 })))))), /* @__PURE__ */ React.createElement(Section, { title: "What a real launcher needs", id: "h-real" }, /* @__PURE__ */ React.createElement("ul", { className: "list" }, /* @__PURE__ */ React.createElement("li", null, "Android exposes installed launchable apps to a launcher through the package manager and launcher-apps services. A browser page cannot see them."), /* @__PURE__ */ React.createElement("li", null, "Each app\u2019s real icon drawable, including adaptive icon foreground and background layers, would replace the simplified vector logos used here."), /* @__PURE__ */ React.createElement("li", null, "Some logos are trademarks with usage rules. Icon packs usually redraw them, as this prototype does."))));
+}
+function AssetLibrary({ theme, lightTheme, darkTheme }) {
+  const [sw, setSw] = useState(!0), [sl, setSl] = useState(55), [ck, setCk] = useState(!0), [rd, setRd] = useState("a"), [sw2, setSw2] = useState(!1), [sl2, setSl2] = useState(30), [ck2, setCk2] = useState(!1), [rd2, setRd2] = useState("b"), dyes = [["Beige", "#d6c9ae"], ["White", "#efece5"], ["Grey", "#a8a7a1"], ["Brown", "#7b5a3e"], ["Charcoal", "#2f3033"], ["Navy", "#22324f"], ["Olive", "#6f7442"], ["Green", "#4c7650"], ["Red", "#9c3b33"], ["Purple", "#5f4572"], ["Blue", "#4a76a6"]], controls = (tag, st) => /* @__PURE__ */ React.createElement("div", { className: "ctl-demo" }, /* @__PURE__ */ React.createElement("span", { className: "mode-tag" }, tag), /* @__PURE__ */ React.createElement("div", { className: "ctl-row" }, /* @__PURE__ */ React.createElement(FabricButton, { tone: "accent" }, "Apply"), /* @__PURE__ */ React.createElement(FabricButton, null, "Cancel")), /* @__PURE__ */ React.createElement("div", { className: "ctl-row" }, /* @__PURE__ */ React.createElement(FabricSwitch, { id: "sw-" + tag, on: st.sw, onChange: st.setSw, label: tag + " switch" }), /* @__PURE__ */ React.createElement(FabricSlider, { id: "sl-" + tag, label: tag + " slider", value: st.sl, onChange: st.setSl, width: 150 })), /* @__PURE__ */ React.createElement("div", { className: "ctl-row" }, /* @__PURE__ */ React.createElement(FabricCheck, { id: "ck-" + tag, checked: st.ck, onChange: st.setCk, label: "Checkbox" }), /* @__PURE__ */ React.createElement(FabricRadio, { id: "ra-" + tag, name: "r-" + tag, checked: st.rd === "a", onChange: () => st.setRd("a"), label: "One" }), /* @__PURE__ */ React.createElement(FabricRadio, { id: "rb-" + tag, name: "r-" + tag, checked: st.rd === "b", onChange: () => st.setRd("b"), label: "Two" })), /* @__PURE__ */ React.createElement("div", { className: "ctl-row" }, /* @__PURE__ */ React.createElement(Patch, { w: 88, h: 40, r: 12, stitchInset: 5 }), /* @__PURE__ */ React.createElement(Patch, { w: 88, h: 40, r: 12, stitchInset: 5, fabric: st.accent }), /* @__PURE__ */ React.createElement(Patch, { w: 40, h: 40, shape: "circle", stitchInset: 4, fabric: st.alt })));
+  return /* @__PURE__ */ React.createElement(ThemeScope, { theme, className: "panel-body" }, /* @__PURE__ */ React.createElement(Section, { title: "Materials", id: "h-tex", hint: "Each woven material is built yarn by yarn: warp and weft passing over and under, with uneven thickness, twist lines and loose fibers. The strip above each sample is the photographed height map, cut from your reference images, that adds large-scale unevenness." }, /* @__PURE__ */ React.createElement("div", { className: "tex-grid" }, Object.entries(MATERIALS).map(([id, m]) => /* @__PURE__ */ React.createElement("figure", { key: id, className: "tex-card" }, /* @__PURE__ */ React.createElement("div", { className: "tex-raw", style: { backgroundImage: `url(${m.map})` } }), /* @__PURE__ */ React.createElement(ThemeScope, { theme: { ...theme, material: id } }, /* @__PURE__ */ React.createElement(Patch, { w: 150, h: 60, r: 12, stitchInset: 6, seed: 70 })), /* @__PURE__ */ React.createElement("figcaption", null, /* @__PURE__ */ React.createElement("b", null, m.label), " ", m.src, "."))))), /* @__PURE__ */ React.createElement(Section, { title: "One weave, eleven dyes", id: "h-dyes", hint: "The same linen map under every color. The base color changes and the grain stays." }, /* @__PURE__ */ React.createElement(ThemeScope, { theme: { ...theme, material: "linen" }, className: "dye-grid" }, dyes.map(([n, h]) => /* @__PURE__ */ React.createElement("figure", { key: n }, /* @__PURE__ */ React.createElement(Patch, { w: 70, h: 46, r: 10, stitchInset: 5, fabric: h, stitchColor: lum(h) > 0.3 ? "#9c7b55" : "#c9b28c" }), /* @__PURE__ */ React.createElement("figcaption", null, n))))), /* @__PURE__ */ React.createElement(Section, { title: "Stitches", id: "h-stitches", hint: "Each stitch is a round, twisted thread sitting in a quilted groove, lit from the same top-left light as everything else." }, /* @__PURE__ */ React.createElement("div", { className: "stitch-grid" }, Object.entries(STITCHES).map(([id, st]) => /* @__PURE__ */ React.createElement("div", { key: id, className: "stitch-row" }, /* @__PURE__ */ React.createElement("span", { className: "inline-label" }, st.label), /* @__PURE__ */ React.createElement(ThemeScope, { theme: lightTheme }, /* @__PURE__ */ React.createElement(Patch, { w: 130, h: 34, r: 8, stitch: id, stitchInset: 9 })), /* @__PURE__ */ React.createElement(ThemeScope, { theme: darkTheme }, /* @__PURE__ */ React.createElement(Patch, { w: 130, h: 34, r: 8, stitch: id, stitchInset: 9 })))))), /* @__PURE__ */ React.createElement(Section, { title: "Embroidered elements", id: "h-elements", hint: "The heart, sun and clouds are photographed embroidery cut out of your third reference image. The rest are vector shapes the renderer turns into padded satin, with thread lines that follow each shape." }, /* @__PURE__ */ React.createElement("div", { className: "el-grid" }, [["heart", "Padded heart"], ["sun", "Satin sun"], ["partly-cloudy", "Few clouds"]].map(([f, n]) => /* @__PURE__ */ React.createElement("figure", { key: f }, /* @__PURE__ */ React.createElement("img", { src: "assets/" + f + ".png", alt: n, className: "cutout" }), /* @__PURE__ */ React.createElement("figcaption", null, n, " \xB7 photo cutout"))), /* @__PURE__ */ React.createElement("figure", null, /* @__PURE__ */ React.createElement(Glyph, { name: "leaf", size: 64 }), /* @__PURE__ */ React.createElement("figcaption", null, "Leaf sprig \xB7 vector")), [["moon", "#e6c36a"], ["star", "#f0b23d"], ["drop", "#5c9bd6"], ["heart", "#c0272e"]].map(([g, c]) => /* @__PURE__ */ React.createElement("figure", { key: g + c }, /* @__PURE__ */ React.createElement(Glyph, { name: g, size: 56, color: c }), /* @__PURE__ */ React.createElement("figcaption", null, g[0].toUpperCase() + g.slice(1), " \xB7 vector"))))), /* @__PURE__ */ React.createElement(Section, { title: "Controls in both modes", id: "h-ctl", hint: "Buttons, switch, slider, checkbox, radio and patches built from the same engine. They all work." }, /* @__PURE__ */ React.createElement("div", { className: "ctl-pair" }, /* @__PURE__ */ React.createElement(ThemeScope, { theme: lightTheme, className: "mode-tile light-tile" }, controls("Light", { sw, setSw, sl, setSl, ck, setCk, rd, setRd, accent: lightTheme.tokens.accent, alt: "#9c3b33" })), /* @__PURE__ */ React.createElement(ThemeScope, { theme: darkTheme, className: "mode-tile dark-tile" }, controls("Dark", { sw: sw2, setSw: setSw2, sl: sl2, setSl: setSl2, ck: ck2, setCk: setCk2, rd: rd2, setRd: setRd2, accent: darkTheme.tokens.accent, alt: "#4a76a6" })))));
+}
+function Notes({ battery }) {
+  const rows = [
+    ["Works in this prototype", ["Every Theme Studio control updates the home screen immediately.", "Four matching themes, each with a light and a dark version that colors every widget. The Light and Dark switch under the phone swaps between them.", "Fabric, thread and accent colors are independent, and each mode keeps its own set.", "Wallpaper choice, photo upload, and color analysis by k-means clustering of a 48-pixel-wide sample.", "The icon renderer, layer view, unknown-app monogram fallback and custom logo upload.", "Love Mode, Wi-Fi and Bluetooth tiles, page swiping, app search, music controls and the notification shade.", "Clock, date and calendar use your device time."]],
+    ["Simulated sample data", ["Temperature, conditions and air quality.", battery.live ? "Battery level reads from this device through the browser." : "Battery level. This browser does not share battery status, so 100% is a sample value.", "Notifications, music tracks, Wi-Fi and Bluetooth state.", "Opening apps, calls and messages show a note instead."]],
+    ["Needs a native Android launcher", ["Listing installed apps and launching them.", "Using each app\u2019s real icon drawable, including adaptive icons.", "Being set as the default home app, and placing real system widgets.", "Reading real weather, notifications and connectivity, each behind its own Android permission or service.", "Restyling the system notification shade or other apps\u2019 widgets is not possible for a launcher and is not claimed here."]],
+    ["Asset limits", ["Fine weave detail is generated yarn by yarn so it stays sharp at any size. The photographs from your reference images only add large-scale unevenness, because they are too soft at thread level.", "Logos are simplified vector redraws, not official brand files.", "Sample wallpapers are generated scenes, not photographs."]]
+  ];
+  return /* @__PURE__ */ React.createElement("div", { className: "panel-body" }, rows.map(([title, items]) => /* @__PURE__ */ React.createElement(Section, { key: title, title, id: "n-" + title.length }, /* @__PURE__ */ React.createElement("ul", { className: "list" }, items.map((i, k) => /* @__PURE__ */ React.createElement("li", { key: k }, i))))));
+}
+const TABS = [["studio", "Theme Studio"], ["icons", "Icon Lab"], ["assets", "Asset Library"], ["notes", "Prototype notes"]];
+function PhoneStage({ children, compact }) {
+  const ref = useRef(null), [scale, setScale] = useState(1);
+  return useLayoutEffect(() => {
+    const upd = () => {
+      const el = ref.current;
+      if (!el) return;
+      const w = el.clientWidth, vh = window.innerHeight, maxH = compact ? vh * 0.44 : Math.max(520, vh - 40);
+      setScale(Math.min(1.08, w / 384, maxH / 804));
+    };
+    upd();
+    const ro = new ResizeObserver(upd);
+    return ro.observe(ref.current), window.addEventListener("resize", upd), () => {
+      ro.disconnect(), window.removeEventListener("resize", upd);
+    };
+  }, [compact]), /* @__PURE__ */ React.createElement("div", { ref, className: "stage" + (compact ? " compact" : ""), style: { height: 804 * scale + 8 } }, /* @__PURE__ */ React.createElement("div", { className: "device", style: { transform: `scale(${scale})` } }, children));
+}
+function App() {
+  const [s, setS] = useState(() => loadSettings() || DEFAULTS), [userWalls, setUserWalls] = useState([]), [srcs, setSrcs] = useState({}), [analysis, setAnalysis] = useState({}), [wallErr, setWallErr] = useState(null), [tab, setTab] = useState(() => {
+    const h = (location.hash || "").slice(1);
+    return TABS.some((t) => t[0] === h) ? h : "studio";
+  }), [labApp, setLabApp] = useState("whatsapp"), [unknownName, setUnknownName] = useState("Field Notes"), [customLogo, setCustomLogo] = useState(null), [narrow, setNarrow] = useState(() => window.matchMedia("(max-width: 899px)").matches), [mobileView, setMobileView] = useState("home"), panelRef = useRef(null);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 899px)"), f = () => setNarrow(mq.matches);
+    return mq.addEventListener("change", f), () => mq.removeEventListener("change", f);
+  }, []), useEffect(() => {
+    const t = setTimeout(() => saveSettings(s), 250);
+    return () => clearTimeout(t);
+  }, [s]);
+  const wallpapers = useMemo(() => [...SCENES.map((sc) => ({ id: sc.id, name: sc.name })), ...userWalls], [userWalls]);
+  useEffect(() => {
+    wallpapers.some((w) => w.id === s.wallpaper) || setS((p) => ({ ...p, wallpaper: DEFAULTS.wallpaper }));
+  }, [wallpapers, s.wallpaper]), useEffect(() => {
+    let cancelled = !1;
+    const order = [...SCENES].sort((a, b) => a.id === s.wallpaper ? -1 : b.id === s.wallpaper ? 1 : 0), step = (i) => {
+      if (cancelled || i >= order.length) return;
+      const sc = order[i], url = renderScene(sc);
+      setSrcs((p) => p[sc.id] ? p : { ...p, [sc.id]: url }), setTimeout(() => step(i + 1), 30);
+    };
+    return step(0), () => {
+      cancelled = !0;
+    };
+  }, []);
+  const wallSrc = srcs[s.wallpaper];
+  useEffect(() => {
+    if (!wallSrc) return;
+    const id = s.wallpaper;
+    if (analysis[id] && analysis[id].status !== "pending") return;
+    setAnalysis((a) => ({ ...a, [id]: { status: "pending" } }));
+    const t = setTimeout(() => {
+      analyzeWallpaper(id, wallSrc).then((data) => setAnalysis((a) => ({ ...a, [id]: { status: "ok", data } }))).catch(() => setAnalysis((a) => ({ ...a, [id]: { status: "error" } })));
+    }, 160);
+    return () => clearTimeout(t);
+  }, [s.wallpaper, wallSrc]);
+  const an = analysis[s.wallpaper], autoPal = s.source === "auto" && an && an.status === "ok" ? an.data[s.mode] : null, pal = autoPal ? { fabric: autoPal.fabric, thread: autoPal.thread, accent: autoPal.accent } : s.palettes[s.mode], rolesFor = (m) => s.source === "auto" ? null : s.roles && s.roles[m] || null, theme = useMemo(() => makeTheme(s, s.mode, pal, rolesFor(s.mode)), [s, pal.fabric, pal.thread, pal.accent]), palFor = (m) => s.source === "auto" && an && an.status === "ok" ? an.data[m] : s.palettes[m], lightTheme = useMemo(() => makeTheme(s, "light", palFor("light"), rolesFor("light")), [s, an]), darkTheme = useMemo(() => makeTheme(s, "dark", palFor("dark"), rolesFor("dark")), [s, an]), act = {
+    set: (k, v) => setS((p) => ({ ...p, [k]: v })),
+    setMode: (m) => setS((p) => ({ ...p, mode: m })),
+    setSource: (v) => setS((p) => ({ ...p, source: v })),
+    setWallpaper: (id) => {
+      setWallErr(null), setS((p) => ({ ...p, wallpaper: id }));
+    },
+    setColor: (key, hex) => setS((p) => ({ ...p, source: "manual", palettes: { ...p.palettes, [p.mode]: { ...pal, [key]: hex } }, ...key === "fabric" ? { preset: null, roles: { ...p.roles, [p.mode]: null } } : {} })),
+    applyPreset: (id) => {
+      const pr = PRESETS.find((x) => x.id === id);
+      pr && setS((p) => ({ ...p, preset: id, source: "manual", material: pr.material, palettes: { light: presetPalette(pr, "light"), dark: presetPalette(pr, "dark") }, roles: { light: pr.light.roles, dark: pr.dark.roles } }));
+    },
+    applySuggestion: () => {
+      if (!an || an.status !== "ok") return;
+      const sg = an.data[s.mode];
+      setS((p) => ({ ...p, preset: null, palettes: { ...p.palettes, [p.mode]: { fabric: sg.fabric, thread: sg.thread, accent: sg.accent } }, roles: { ...p.roles, [p.mode]: null } }));
+    },
+    reset: () => {
+      setS(DEFAULTS), setWallErr(null);
+    },
+    upload: (file) => {
+      if (setWallErr(null), !file) return;
+      if (!/^image\//.test(file.type)) {
+        setWallErr("That file is not an image. Choose a JPG, PNG or WebP photo.");
+        return;
+      }
+      if (file.size > 3e7) {
+        setWallErr("That photo is larger than 30 MB. Choose a smaller one.");
+        return;
+      }
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onload = () => {
+        try {
+          const sc = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight)), c = mkCanvas(Math.max(1, Math.round(img.naturalWidth * sc)), Math.max(1, Math.round(img.naturalHeight * sc)));
+          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+          const data = c.toDataURL("image/jpeg", 0.88), id = "u" + Date.now(), name = (file.name || "Your photo").replace(/\.[a-z0-9]+$/i, "").slice(0, 22) || "Your photo";
+          setUserWalls((w) => [...w, { id, name, user: !0 }]), setSrcs((p) => ({ ...p, [id]: data })), setS((p) => ({ ...p, wallpaper: id }));
+        } catch {
+          setWallErr("This photo could not be prepared in the browser. Try a different JPG or PNG.");
+        }
+        URL.revokeObjectURL(url);
+      }, img.onerror = () => {
+        URL.revokeObjectURL(url), setWallErr("This browser could not open that image. HEIC photos often fail here; try a JPG or PNG.");
+      }, img.src = url;
+    }
+  }, extraApps = useMemo(() => {
+    const list = [unknownApp(unknownName, "unknown"), unknownApp("Tidewatch", "unknown2")];
+    return customLogo && list.push(imageApp(customLogo.name, customLogo.src)), list;
+  }, [unknownName, customLogo]), sampleApps = useMemo(() => [...APPS.filter((a) => a.id !== "studio"), ...extraApps.filter((a) => a.id !== "unknown2")], [extraApps]), goTab = (id) => {
+    setTab(id);
+    try {
+      history.replaceState(null, "", "#" + id);
+    } catch {
+    }
+    narrow && setMobileView("studio"), setTimeout(() => panelRef.current && panelRef.current.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
+  }, openStudio = () => goTab("studio"), battery = useBattery(), phone = /* @__PURE__ */ React.createElement(Phone, { theme, wallSrc, love: s.love, setLove: (v) => act.set("love", v), onOpenStudio: openStudio, extraApps });
+  return /* @__PURE__ */ React.createElement("div", { className: "app" + (narrow ? " narrow" : "") + (narrow && mobileView === "studio" ? " studio-open" : "") }, /* @__PURE__ */ React.createElement(FilterDefs, { k: theme.depthK }), /* @__PURE__ */ React.createElement("header", { className: "top" }, /* @__PURE__ */ React.createElement("div", { className: "brand" }, /* @__PURE__ */ React.createElement("span", { className: "brand-mark", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement(Bobbin, { hex: theme.tokens.thread, size: 30 })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "Fabric UI"), /* @__PURE__ */ React.createElement("p", null, "A linen launcher prototype for Android, running in your browser"))), narrow && /* @__PURE__ */ React.createElement("div", { className: "mobile-switch" }, /* @__PURE__ */ React.createElement(Seg, { id: "mobile-seg", label: "View", value: mobileView, onChange: setMobileView, options: [{ value: "home", label: "Home screen" }, { value: "studio", label: "Theme Studio" }] }))), /* @__PURE__ */ React.createElement("main", { className: "layout" }, /* @__PURE__ */ React.createElement("div", { className: "phone-col" }, /* @__PURE__ */ React.createElement(PhoneStage, { compact: narrow && mobileView === "studio" }, phone), !(narrow && mobileView === "studio") && /* @__PURE__ */ React.createElement("div", { className: "phone-cap" }, /* @__PURE__ */ React.createElement("p", null, /* @__PURE__ */ React.createElement("b", null, "Live:"), " time, date and calendar from your device", battery.live ? ", battery level" : "", ". ", /* @__PURE__ */ React.createElement("b", null, "Sample:"), " weather, air quality, ", battery.live ? "" : "battery, ", "notifications and music."), /* @__PURE__ */ React.createElement("span", { className: "cap-actions" }, /* @__PURE__ */ React.createElement(Seg, { id: "cap-mode", label: "Appearance", value: s.mode, onChange: act.setMode, options: [{ value: "light", label: "Light" }, { value: "dark", label: "Dark" }] }), /* @__PURE__ */ React.createElement("button", { type: "button", className: "btn", onClick: openStudio }, "Open Theme Studio")))), (!narrow || mobileView === "studio") && /* @__PURE__ */ React.createElement("div", { className: "panel", ref: panelRef }, /* @__PURE__ */ React.createElement("nav", { className: "tabs", role: "tablist", "aria-label": "Panels" }, TABS.map(([id, label]) => /* @__PURE__ */ React.createElement("button", { key: id, type: "button", role: "tab", "aria-selected": tab === id, className: tab === id ? "on" : "", onClick: () => goTab(id) }, label))), tab === "studio" && /* @__PURE__ */ React.createElement(Studio, { s, act, theme, wallpapers, srcs, analysis, wallErr, labApp, setLabApp, sampleApps, goTab, wallSrc }), tab === "icons" && /* @__PURE__ */ React.createElement(IconLab, { theme, lightTheme, darkTheme, labApp, setLabApp, sampleApps, unknownName, setUnknownName, customLogo, setCustomLogo, wallSrc }), tab === "assets" && /* @__PURE__ */ React.createElement(AssetLibrary, { theme, lightTheme, darkTheme }), tab === "notes" && /* @__PURE__ */ React.createElement(Notes, { battery }))));
+}
+loadTex();
+const bootApp = () => ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(FontsCtx.Provider, { value: !0 }, /* @__PURE__ */ React.createElement(App, null)));
+Promise.race([Promise.all(["500", "600", "700"].map((w) => document.fonts.load(w + " 24px Fredoka"))), new Promise((r) => setTimeout(r, 2500))]).catch(() => {
+}).then(bootApp);
+
+</script>
+
+</body></html>
